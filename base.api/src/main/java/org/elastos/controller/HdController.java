@@ -9,7 +9,6 @@ package org.elastos.controller;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.service.ElaService;
-import org.elastos.util.RetCodeConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

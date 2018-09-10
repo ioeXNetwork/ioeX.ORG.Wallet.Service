@@ -7,10 +7,10 @@
 package org.elastos.controller;
 
 import com.alibaba.fastjson.JSON;
+import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.exception.ApiInternalException;
 import org.elastos.util.JsonUtil;
-import org.elastos.util.RetCodeConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

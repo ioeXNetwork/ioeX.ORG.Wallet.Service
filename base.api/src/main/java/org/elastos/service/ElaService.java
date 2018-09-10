@@ -13,6 +13,9 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
+import org.elastos.conf.BasicConfiguration;
+import org.elastos.conf.NodeConfiguration;
+import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.entity.ReturnMsgEntity;
