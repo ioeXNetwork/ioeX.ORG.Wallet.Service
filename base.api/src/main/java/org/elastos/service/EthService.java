@@ -46,6 +46,25 @@ public class EthService {
     }
 
     /**
+     * get instance of web3j
+     * @return
+     */
+    public Web3j web3j(){
+        if (web3j == null){
+            init();
+        }
+        return web3j;
+    }
+
+    /**
+     * get gas limit
+     * @return
+     */
+    public BigInteger getGasLimit(){
+        return ethConfiguration.getGasLimit();
+    }
+
+    /**
      * create a ETH wallet
      * @param password password used to generate wallet
      * @param descDir  wallet file location
@@ -136,27 +155,6 @@ public class EthService {
         }
         TransactionReceipt transactionReceipt = Transfer.sendFunds(web3j, credentials, toAddr, new BigDecimal(value), Convert.Unit.WEI).send();
         return transactionReceipt;
-    }
-
-    /**
-     * send smart contract
-     * @param senderAddr
-     * @param toAddr
-     * @param value
-     * @param credentials
-     * @param contractCode
-     * @return
-     * @throws Exception
-     */
-    public String sendContract(String senderAddr , String toAddr , BigInteger value,Credentials credentials,String contractCode) throws  Exception{
-        if(web3j == null){
-            init();
-        }
-
-        BigInteger nonce = getNonce(senderAddr,"latest");
-        RawTransaction rawTransaction  = RawTransaction.createContractTransaction(
-                nonce, getGasPrice(), ethConfiguration.getGasLimit(), value, contractCode);
-        return sendRawTx(rawTransaction,credentials);
     }
 
     /**
