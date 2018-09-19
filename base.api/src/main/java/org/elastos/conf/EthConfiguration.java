@@ -22,6 +22,24 @@ public class EthConfiguration {
     private String infuraNetwork;
     private String infuraToken;
     private BigInteger gasLimit;
+    private Boolean infuraEnable;
+    private String network;
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
+    }
+
+    public Boolean getInfuraEnable() {
+        return infuraEnable;
+    }
+
+    public void setInfuraEnable(Boolean infuraEnable) {
+        this.infuraEnable = infuraEnable;
+    }
 
     public BigInteger getGasLimit() {
         return gasLimit;

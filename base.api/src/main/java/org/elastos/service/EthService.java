@@ -41,7 +41,11 @@ public class EthService {
 
     private void init(){
         if (web3j == null){
-            web3j = Web3j.build(new HttpService(ethConfiguration.getInfuraAccessUrl()));
+            if(ethConfiguration.getInfuraEnable()){
+                web3j = Web3j.build(new HttpService(ethConfiguration.getInfuraAccessUrl()));
+            }else{
+                web3j = Web3j.build(new HttpService(ethConfiguration.getNetwork()));
+            }
         }
     }
 

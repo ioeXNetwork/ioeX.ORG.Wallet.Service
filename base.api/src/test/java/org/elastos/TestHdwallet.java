@@ -30,9 +30,9 @@ public class TestHdwallet {
                 "            {\n" +
                 "                \"UTXOInputs\": [\n" +
                 "                    {\n" +
-                "                        \"address\": \"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv\",\n" +
-                "                        \"txid\": \"8ca04562c00c26a2a0669a594da61f167d226d9357ebba3069a2930e6154bc08\",\n" +
-                "                        \"index\": 2\n" +
+                "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\",\n" +
+                "                        \"txid\": \"7736d0be003e86039f25bec1128a8eba12d67bb8a032947159f7617dbd368486\",\n" +
+                "                        \"index\": 0\n" +
                 "                    }\n" +
                 "                ],\n" +
                 "                \"Fee\": 100,\n" +
@@ -42,12 +42,8 @@ public class TestHdwallet {
                 "                        \"address\": \"EPzxJrHefvE7TCWmEGQ4rcFgxGeGBZFSHw\"\n" +
                 "                    },\n" +
                 "                    {\n" +
-                "                        \"amount\": 9000,\n" +
-                "                        \"address\": \"EK2x7bGyUQsgg1TVVkBCPCkjQdYCCf57fe\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"amount\": 969600,\n" +
-                "                        \"address\": \"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv\"\n" +
+                "                        \"amount\": 99998900,\n" +
+                "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\"\n" +
                 "                    }\n" +
                 "                ]\n" +
                 "            }\n" +
@@ -58,6 +54,8 @@ public class TestHdwallet {
 
          privKeyMap.put("EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv","0D5D7566CA36BC05CFF8E3287C43977DCBB492990EA1822643656D85B3CB0226");
          privKeyMap.put("ERNEdQ3ngqjf15SsAhW8ByJQt8HEhDfuRL","E763239857B390502289CF75FF06EEEDC3252A302C50E1CBB7E5FAC8A703486F");
+         privKeyMap.put("EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV","DFE88FE877CD15EDFCFA2125158618BB5CB76C9465B87D0B339B735FF7F59E61");
+
     }
     @Test
     public void TestGenRawTx() {
