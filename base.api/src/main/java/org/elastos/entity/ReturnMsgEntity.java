@@ -11,9 +11,9 @@ package org.elastos.entity;
  * <p>
  * 9/3/18
  */
-public class ReturnMsgEntity {
+public class ReturnMsgEntity<V> {
     private Long status;
-    private Object result;
+    private V result;
 
     public Long getStatus() {
         return status;
@@ -24,19 +24,19 @@ public class ReturnMsgEntity {
         return this;
     }
 
-    public Object getResult() {
+    public V getResult() {
         return result;
     }
 
-    public ReturnMsgEntity setResult(Object result) {
+    public ReturnMsgEntity setResult(V result) {
         this.result = result;
         return this;
     }
 
-    public static class ELAReturnMsg {
+    public static class ELAReturnMsg<T> {
         private String Desc;
         private Long Error;
-        private String Result;
+        private T Result;
 
         public String getDesc() {
             return Desc;
@@ -54,13 +54,14 @@ public class ReturnMsgEntity {
             error = error;
         }
 
-        public String getResult() {
+        public T getResult() {
             return Result;
         }
 
-        public void setResult(String result) {
-            result = result;
+        public void setResult(T result) {
+            Result = result;
         }
 
     }
+
 }

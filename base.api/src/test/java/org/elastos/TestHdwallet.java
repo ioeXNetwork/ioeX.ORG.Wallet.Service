@@ -9,6 +9,7 @@ package org.elastos;
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
 import org.elastos.elaweb.ElaController;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class TestHdwallet {
 
     }
     @Test
+    @Ignore
     public void TestGenRawTx() {
         try {
             Map m = (Map) JSON.parse(txInfo);

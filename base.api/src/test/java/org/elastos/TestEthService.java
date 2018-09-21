@@ -9,9 +9,9 @@ package org.elastos;
 import org.elastos.contract.*;
 import org.elastos.service.EthService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.relaxng.datatype.Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +60,14 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testGetClientVersion() throws Exception{
         String version = web3j.web3ClientVersion().send().getWeb3ClientVersion();
         System.out.println(version);
     }
 
     @Test
+    @Ignore
     public void testGenAddr(){
         try{
             String fileName = ethService.createWallet("123456","/Users/clark/Desktop");
@@ -76,6 +78,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testSendETHV1(){
         try{
             BigInteger value = Convert.toWei("10", Convert.Unit.ETHER).toBigInteger();
@@ -88,6 +91,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testSendETHV2(){
         try{
             BigInteger value = Convert.toWei("0.019", Convert.Unit.ETHER).toBigInteger();
@@ -99,24 +103,28 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractMortal() throws Exception{
         Mortal mortal = Mortal.deploy(web3j,credentials,gasPrice,gasLimit).send();
         System.out.println(mortal.getContractAddress()+ "  " + mortal.getTransactionReceipt().get());
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractMortal() throws Exception{
         Mortal mortal = Mortal.load("0x629d7b3c3f351f31dbe0961e2b0047a126843583",web3j,credentials,gasPrice,gasLimit);
         System.out.println(mortal.isValid());
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractGreeter() throws Exception{
         Greeter greeter = Greeter.deploy(web3j,credentials,gasPrice,gasLimit,"hello,clark").send();
         System.out.println(greeter.getContractAddress()+ "  " + greeter.getTransactionReceipt().get());
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractGreeter() throws Exception {
         Greeter greeter = Greeter.load("0xbccf97397191ee24633c72d969aae0b155d3416b",web3j,credentials,gasPrice,gasLimit);
         String greeting = greeter.greet().send();
@@ -124,6 +132,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractArrays() throws Exception{
         Arrays arrays = Arrays.deploy(web3j,credentials,new BigInteger("50000000000"),gasLimit).send();
         logger.debug("contract address {}, transaction receipt {}", arrays.getContractAddress(),arrays.getTransactionReceipt());
@@ -131,6 +140,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractArrays() throws Exception {
         Arrays arrays = Arrays.load("0x7d621b7ab2a3F9aE87f3831e1E300Bc21D3e614C",web3j,credentials,gasPrice,gasLimit);
         List<BigInteger> origin = new ArrayList<BigInteger>();
@@ -152,12 +162,14 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractFibonacci() throws Exception {
         Fibonacci fibonacci = Fibonacci.deploy(web3j,credentials,gasPrice,gasLimit).send();
         System.out.println(fibonacci.getContractAddress() + " " + fibonacci.getTransactionReceipt());
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractFibonacci() throws Exception {
         Fibonacci fibonacci = Fibonacci.load("0xb372f7c6c0e4e4b529a7ee5c1510571847118cdd",web3j,credentials,gasPrice,gasLimit);
 //        BigInteger bigInteger = fibonacci.fibonacci(new BigInteger("10")).send();
@@ -168,6 +180,7 @@ public class TestEthService {
 
 
     @Test
+    @Ignore
     public void testDeploySmartContractHumanStandardToken() throws Exception {
         HumanStandardToken token = HumanStandardToken.deploy(web3j,credentials,gasPrice,gasLimit,new BigInteger("1000"),"TEST_FKCN",new BigInteger("18"),"TF").sendAsync().get();
         System.out.println(token.getContractAddress());
@@ -175,6 +188,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractHumanStandardToken() throws Exception {
 
         HumanStandardToken token = HumanStandardToken.load("0x00a6e48f3f4217aad6fee557bd8b491a0b9e06b9",web3j,credentials,gasPrice,gasLimit);
@@ -187,6 +201,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractSimpleStorage() throws Exception{
 
         SimpleStorage simpleStorage = SimpleStorage.deploy(web3j,credentials,gasPrice,gasLimit).sendAsync().get();
@@ -195,6 +210,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractSimpleStorage() throws Exception {
 
         SimpleStorage simpleStorage = SimpleStorage.load("0xafc459e71f9ba894cbe21b05694392c053c551b6",web3j,credentials,gasPrice,gasLimit);
@@ -207,6 +223,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractShipIt() throws Exception{
 
         ShipIt shipIt = ShipIt.deploy(web3j,credentials,gasPrice,gasLimit).sendAsync().get();
@@ -215,6 +232,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractShipIt() throws Exception {
 
         ShipIt shipIt = ShipIt.load("0x75a21e14bad2dfb176a5d3afa05b12ebd02c4e54",web3j,credentials,gasPrice,gasLimit);
@@ -224,6 +242,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeploySmartContractBallot() throws Exception {
         List<byte[]> proposals = new ArrayList<>();
         byte[] first = stringToBytes32("clark");
@@ -237,6 +256,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void test() throws Exception{
 //        byte[] third = stringToBytes32("alice");
 //        System.out.println(new String(third));
@@ -260,6 +280,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractBallot() throws Exception{
         Ballot ballot = Ballot.load("0x20Ad9184672c07c1B8215E013307C6944BECa4A6",web3j,credentials,gasPrice,gasLimit);
 //        TransactionReceipt tr = ballot.giveRightToVote("0xfdbf471435042903392a4fccc8c4ddac882d2294").sendAsync().get();
@@ -269,6 +290,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testDeloySmartContractCurrentTimestamp() throws Exception{
 
         CurrentTimestamp ct = CurrentTimestamp.deploy(web3j,credentials,gasPrice,gasLimit).sendAsync().get();
@@ -278,6 +300,7 @@ public class TestEthService {
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractCurrentTimestamp() throws Exception{
 
         CurrentTimestamp ct = CurrentTimestamp.load("0x22cda3d21998a0928095bb6387ec6b529edcacfe",web3j,credentials,gasPrice,gasLimit);
@@ -287,12 +310,14 @@ public class TestEthService {
 
 
     @Test
+    @Ignore
     public void testDeploySmartContractELA() throws Exception{
         Ela ela = Ela.deploy(web3j,credentials,gasPrice,gasLimit,new BigInteger("33000000"),"elastos","ELA").sendAsync().get();
         System.out.println(ela.getContractAddress());
     }
 
     @Test
+    @Ignore
     public void testLoadSmartContractELA() throws Exception{
 
         Ela ela = Ela.load("0xf3a35e9d4e21bead3f4ec523abab385699d879a4",web3j,credentials,gasPrice,gasLimit);

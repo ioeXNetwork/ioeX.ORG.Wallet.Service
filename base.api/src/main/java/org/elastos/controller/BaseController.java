@@ -11,6 +11,7 @@ import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.exception.ApiInternalException;
 import org.elastos.util.JsonUtil;
+import org.elastos.util.StrKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,39 +30,57 @@ import java.lang.reflect.Method;
 public class BaseController {
     @Autowired
     private RetCodeConfiguration retCodeConfiguration;
+
     private Logger logger = LoggerFactory.getLogger(BaseController.class);
 
     /**
-     * call elaService method
-     * @param reqBody request body
-     * @param clazz Entity class name
+     * POST/GET request
+     *
+     * @param reqParam    request body
+     * @param clazz      Entity class name
      * @param methodName invoked method name
+     * @param service    requested service
      * @param <T>
      * @return
      */
-    protected <T> String call(String reqBody,Class<T> clazz,String methodName,Object service){
-        try{
+    protected <T> String call(String reqParam, Class<T> clazz, String methodName, Object service) {
+        try {
+            if (reqParam != null){
 
-            T entity = JsonUtil.jsonStr2Entity(reqBody,clazz);
+                T entity = JsonUtil.jsonStr2Entity((String)reqParam, clazz);
 
-            Method m = service.getClass().getDeclaredMethod(methodName,entity.getClass());
+                Method m = service.getClass().getDeclaredMethod(methodName, clazz);
 
-            return (String)m.invoke(service,entity);
+                return (String) m.invoke(service, entity);
 
-        }catch (Exception ex){
+            }else{
 
-            ex.printStackTrace();
+                Method m = service.getClass().getDeclaredMethod(methodName);
 
-            logger.error("Hd {} error : {}",methodName, ex);
+                return (String) m.invoke(service);
 
-            long status = 0;
-
-            if (ex instanceof ApiInternalException){
-                status = retCodeConfiguration.NTERNAL_ERROR();
-            }else {
-                status = retCodeConfiguration.BAD_REQUEST();
             }
-            return JSON.toJSONString(new ReturnMsgEntity().setResult(ex.getCause().getMessage()).setStatus(status));
+
+        } catch (Exception ex) {
+
+            return handleError(ex, methodName);
         }
+    }
+
+    private String handleError(Exception ex, String methodName) {
+
+        ex.printStackTrace();
+
+        logger.error("Hd {} error : {}", methodName, ex);
+
+        long status = 0;
+
+        if (ex instanceof ApiInternalException) {
+            status = retCodeConfiguration.NTERNAL_ERROR();
+        } else {
+            status = retCodeConfiguration.BAD_REQUEST();
+        }
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(ex.getMessage()).setStatus(status));
+
     }
 }

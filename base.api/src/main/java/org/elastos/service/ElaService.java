@@ -6,6 +6,8 @@
  */
 package org.elastos.service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,6 @@ import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.entity.ReturnMsgEntity;
-import org.elastos.exception.ApiInternalException;
 import org.elastos.exception.ApiRequestDataException;
 import org.elastos.util.*;
 import org.slf4j.Logger;
@@ -83,6 +84,104 @@ public class ElaService {
 
     }
 
+    /**
+     * get the current height of blockchain
+     * @return
+     */
+    public String getCurrentHeight(){
+
+        return reqChainData(nodeConfiguration.getBlockHeight());
+    }
+
+    /**
+     * get block txs by height
+     * @return
+     */
+    public String getBlockTxsByHeight(String height){
+
+        return reqChainData(nodeConfiguration.getBlockTxByHeight()+ height);
+    }
+
+    /**
+     * get block by height
+     * @param height
+     * @return
+     */
+    public String getBlockByHeight(String height){
+
+        return reqChainData(nodeConfiguration.getBlockByHeight()+ height);
+    }
+
+    /**
+     * get block by hash
+     * @param hash
+     * @return
+     */
+    public String getBlockByHash(String hash){
+
+        return reqChainData(nodeConfiguration.getBlockByhash()+ hash);
+    }
+
+    /**
+     * get transaction by hash
+     * @param hash
+     * @return
+     */
+    public String getTransactionByHash(String hash){
+
+        return reqChainData(nodeConfiguration.getTransaction()+ hash);
+    }
+
+    /**
+     * get address balance
+     * @param address
+     * @return
+     */
+    public String getBalance(String address){
+
+        String result = HttpKit.get(nodeConfiguration.getUtxoByAddr()+ address);
+
+        Map<String,Object>  resultMap = (Map<String,Object>) JSON.parse(result);
+
+        Map m = ((List<Map>)resultMap.get("Result")).get(0);
+
+        List<Map> lm = (List<Map>)m.get("Utxo");
+
+        BigDecimal total = new BigDecimal("0.0");
+
+        for(int i=0;i<lm.size();i++){
+            Map md = lm.get(i);
+            BigDecimal v = new BigDecimal((String)md.get("Value"));
+            total = total.add(v);
+        }
+
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(total.toString()).setStatus(retCodeConfiguration.SUCC()));
+    }
+
+    /**
+     * get address utxos
+     * @param address
+     * @return
+     */
+    public String getUtxos(String address){
+
+        return reqChainData(nodeConfiguration.getUtxoByAddr()+ address);
+    }
+
+    /**
+     * using http request chain data.
+     * @param requestUrl
+     * @return
+     */
+    private String reqChainData(String requestUrl){
+
+        String result = HttpKit.get(requestUrl);
+
+        Map<String,Object>  resultMap = (Map<String,Object>) JSON.parse(result);
+
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(resultMap.get("Result")).setStatus(retCodeConfiguration.SUCC()));
+
+    }
     /**
      * genHdTx info
      * @param hdTxEntity info entity
@@ -184,4 +283,6 @@ public class ElaService {
 
         return result;
     }
+
+
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * hard wallet related service
  */
 @RestController
-public class HdController extends BaseController{
+public class ElaOfflineController extends BaseController{
     @Autowired
     private ElaService elaService;
 
