@@ -143,6 +143,14 @@ public class ElaService {
 
         Map<String,Object>  resultMap = (Map<String,Object>) JSON.parse(result);
 
+        Object resObj = resultMap.get("Result");
+
+        if (resObj == null || StrKit.isBlank(resObj+"") || (resObj +"").equalsIgnoreCase("null")){
+
+            return JSON.toJSONString(new ReturnMsgEntity().setResult("0.0").setStatus(retCodeConfiguration.SUCC()));
+
+        }
+
         Map m = ((List<Map>)resultMap.get("Result")).get(0);
 
         List<Map> lm = (List<Map>)m.get("Utxo");
