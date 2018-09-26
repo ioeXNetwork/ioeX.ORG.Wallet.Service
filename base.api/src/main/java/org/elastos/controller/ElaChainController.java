@@ -6,6 +6,7 @@
  */
 package org.elastos.controller;
 
+import org.elastos.entity.SignDataEntity;
 import org.elastos.service.ElaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +69,35 @@ public class ElaChainController extends BaseController{
     public String getUtxos(@PathVariable("address") String address){
 
         return call( address ,String.class,"getUtxos",service);
+    }
+
+
+    @RequestMapping(value = "/did",method = RequestMethod.GET)
+    @ResponseBody
+    public String createDID(){
+
+        return call(null,null,"createDid",service);
+    }
+
+    @RequestMapping(value = "/did/{privateKey}",method = RequestMethod.GET)
+    @ResponseBody
+    public String retriveDID(@PathVariable("privateKey") String privateKey){
+
+        return call(privateKey,String.class,"retriveDid",service);
+    }
+
+    @RequestMapping(value = "/sign",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String sign(@RequestBody String reqBody){
+
+        return call(reqBody,SignDataEntity.class,"sign",service);
+    }
+
+    @RequestMapping(value = "/verify",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String verify(@RequestBody String reqBody){
+
+        return call(reqBody,SignDataEntity.class,"verify",service);
     }
 
 }

@@ -6,27 +6,38 @@
  */
 package org.elastos.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
+import org.elastos.api.Basic;
 import org.elastos.conf.BasicConfiguration;
 import org.elastos.conf.NodeConfiguration;
 import org.elastos.conf.RetCodeConfiguration;
+import org.elastos.ela.ECKey;
+import org.elastos.ela.Ela;
+import org.elastos.ela.SignTool;
+import org.elastos.ela.Util;
+import org.elastos.ela.bitcoinj.Sha256Hash;
+import org.elastos.elaweb.ElaController;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.entity.ReturnMsgEntity;
+import org.elastos.entity.SignDataEntity;
 import org.elastos.exception.ApiRequestDataException;
 import org.elastos.util.*;
+import org.relaxng.datatype.Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * @author clark
@@ -36,13 +47,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class ElaService {
 
+    private static final String CHARSET = "UTF-8";
+
     @Autowired
     private NodeConfiguration nodeConfiguration;
     @Autowired
     private BasicConfiguration basicConfiguration;
     @Autowired
     private RetCodeConfiguration retCodeConfiguration;
-
 
     private static Logger logger = LoggerFactory.getLogger(ElaService.class);
 
@@ -175,6 +187,70 @@ public class ElaService {
 
         return reqChainData(nodeConfiguration.getUtxoByAddr()+ address);
     }
+
+
+    /**
+     * create did
+     * @return
+     * @throws Exception
+     */
+    public String createDid() throws Exception{
+        JSONObject result = new JSONObject();
+        String privKey = Ela.getPrivateKey();
+        String did = Ela.getIdentityIDFromPrivate(privKey);
+        result.put("privateKey",privKey);
+        result.put("did",did);
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(result).setStatus(retCodeConfiguration.SUCC()));
+    }
+
+    /**
+     * using privateKey sign data
+     * @param entity
+     * @return
+     * @throws Exception
+     */
+    public String sign(SignDataEntity entity)  throws Exception{
+        JSONObject result = new JSONObject();
+        String msg = entity.getMsg();
+        String privateKey = entity.getPrivateKey();
+        ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        dos.write(msg.getBytes(CHARSET));
+        byte[] signature = SignTool.doSign(baos.toByteArray(), DatatypeConverter.parseHexBinary(privateKey));
+        byte[] code = new byte[33];
+        System.arraycopy(Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1), 1,code,0,code.length);
+        result.put("msg",DatatypeConverter.printHexBinary(msg.getBytes(CHARSET)));
+        result.put("pub",DatatypeConverter.printHexBinary(code));
+        result.put("sig",DatatypeConverter.printHexBinary(signature));
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(result).setStatus(retCodeConfiguration.SUCC()));
+    }
+
+    public String verify(SignDataEntity entity){
+        String hexMsg = entity.getMsg();
+        String hexSig = entity.getSig();
+        String hexPub = entity.getPub();
+        byte[] msg = DatatypeConverter.parseHexBinary(hexMsg);
+        byte[] sig = DatatypeConverter.parseHexBinary(hexSig);
+        byte[] pub = DatatypeConverter.parseHexBinary(hexPub);
+        boolean isVerify = ElaSignTool.verify(msg,sig,pub);
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(isVerify).setStatus(retCodeConfiguration.SUCC()));
+    }
+
+    /**
+     * retrive did
+     * @param privateKey
+     * @return
+     * @throws Exception
+     */
+    public String retriveDid(String privateKey) throws Exception {
+
+        String did = Ela.getIdentityIDFromPrivate(privateKey);
+
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(did).setStatus(retCodeConfiguration.SUCC()));
+
+    }
+
 
     /**
      * using http request chain data.

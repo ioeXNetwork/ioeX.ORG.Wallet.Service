@@ -8,6 +8,7 @@ package org.elastos;
 
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
+import org.elastos.api.SignTransaction;
 import org.elastos.elaweb.ElaController;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class TestHdwallet {
                 String pubAddr = (String) input.get("address");
                 input.put("privateKey", privKeyMap.get(pubAddr));
             }
-            String rawTx = ElaController.genRawTransaction(JSONObject.fromObject(m));
+            String rawTx = SignTransaction.genRawTransaction(JSONObject.fromObject(m));
             System.out.println(rawTx);
         } catch (Exception ex) {
             ex.printStackTrace();
