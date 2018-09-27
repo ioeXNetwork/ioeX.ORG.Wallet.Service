@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
 import org.elastos.ela.Ela;
+import org.elastos.ela.Util;
 import org.elastos.elaweb.ElaController;
 import org.elastos.entity.ReturnMsgEntity;
 import org.elastos.entity.SignDataEntity;
@@ -25,6 +26,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.crypto.Data;
 import java.util.Map;
 
 /**
@@ -89,4 +92,16 @@ public class TestElaService {
 
     }
 
+    @Test
+    public void testMemo() throws Exception{
+        String data = "617366e6b58be8af95";
+        System.out.println(new String(DatatypeConverter.parseHexBinary(data),"utf-8"));
+    }
+
+    @Test
+    public void testCodeToAddr(){
+        String hexStr = "21036f9a2f47ce0ee6472c97eeec96407c70db6a3727e5427c45468693a034b21e92ac";
+        byte[] program = DatatypeConverter.parseHexBinary(hexStr);
+        System.out.println(Util.ToAddress(Util.ToCodeHash(program,1)));
+    }
 }

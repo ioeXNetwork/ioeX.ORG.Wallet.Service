@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -80,7 +81,17 @@ public class BaseController {
         } else {
             status = retCodeConfiguration.BAD_REQUEST();
         }
-        return JSON.toJSONString(new ReturnMsgEntity().setResult(ex.getMessage()).setStatus(status));
+        String msg = ex.getMessage();
+        if (ex instanceof  InvocationTargetException){
+            msg = ((InvocationTargetException)ex).getTargetException().getMessage();
+        }
+        if (StrKit.isBlank(msg)){
+            msg = ex.getCause().getMessage();
+        }
+        if (StrKit.isBlank(msg)){
+            msg = ex.toString();
+        }
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(msg).setStatus(status));
 
     }
 }

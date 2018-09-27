@@ -6,7 +6,9 @@
  */
 package org.elastos.controller;
 
+import org.elastos.entity.DidInfoEntity;
 import org.elastos.entity.SignDataEntity;
+import org.elastos.entity.TransferParamEntity;
 import org.elastos.service.ElaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,12 @@ public class ElaChainController extends BaseController{
 
     @Autowired
     private ElaService service;
+
+    @RequestMapping(value = "/createWallet",method = RequestMethod.GET)
+    @ResponseBody
+    public String createWallet(){
+        return call(null,null,"createWallet",service);
+    }
 
     @RequestMapping(value = "/currHeight",method = RequestMethod.GET)
     @ResponseBody
@@ -100,5 +108,24 @@ public class ElaChainController extends BaseController{
         return call(reqBody,SignDataEntity.class,"verify",service);
     }
 
+    @RequestMapping(value = "/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String transfer(@RequestBody String reqBody){
 
+        return call(reqBody,TransferParamEntity.class,"transfer",service);
+    }
+
+    @RequestMapping(value = "/setDidInfo",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String setDidInfo(@RequestBody String reqBody){
+
+        return call(reqBody,DidInfoEntity.class,"setDidInfo",service);
+    }
+
+    @RequestMapping(value = "/getDidInfo",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String getDidInfo(@RequestBody String reqBody){
+
+        return call(reqBody,DidInfoEntity.class,"getDidInfo",service);
+    }
 }

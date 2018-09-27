@@ -8,30 +8,28 @@ package org.elastos.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
+import org.elastos.api.SingleSignTransaction;
 import org.elastos.conf.BasicConfiguration;
+import org.elastos.conf.DidConfiguration;
 import org.elastos.conf.NodeConfiguration;
 import org.elastos.conf.RetCodeConfiguration;
 import org.elastos.ela.ECKey;
 import org.elastos.ela.Ela;
 import org.elastos.ela.SignTool;
 import org.elastos.ela.Util;
-import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.elaweb.ElaController;
-import org.elastos.entity.HdTxEntity;
-import org.elastos.entity.RawTxEntity;
-import org.elastos.entity.ReturnMsgEntity;
-import org.elastos.entity.SignDataEntity;
+import org.elastos.entity.*;
+import org.elastos.exception.ApiInternalException;
 import org.elastos.exception.ApiRequestDataException;
 import org.elastos.util.*;
-import org.relaxng.datatype.Datatype;
+import org.elastos.util.ela.ElaKit;
+import org.elastos.util.ela.ElaSignTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +53,25 @@ public class ElaService {
     private BasicConfiguration basicConfiguration;
     @Autowired
     private RetCodeConfiguration retCodeConfiguration;
+    @Autowired
+    private DidConfiguration didConfiguration;
 
     private static Logger logger = LoggerFactory.getLogger(ElaService.class);
+
+    /**
+     * create a ela wallet
+     * @return
+     */
+    public String createWallet(){
+        JSONObject result = new JSONObject();
+        String privateKey = Ela.getPrivateKey();
+        String publicKey  = Ela.getPublicFromPrivate(privateKey);
+        String publicAddr = Ela.getAddressFromPrivate(privateKey);
+        result.put("privateKey",privateKey);
+        result.put("publicKey",publicKey);
+        result.put("address",publicAddr);
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(result).setStatus(retCodeConfiguration.SUCC()));
+    }
 
     public String sendRawTx(RawTxEntity rawTxEntity){
         String rawTx = JSON.toJSONString(rawTxEntity);
@@ -226,6 +241,11 @@ public class ElaService {
         return JSON.toJSONString(new ReturnMsgEntity().setResult(result).setStatus(retCodeConfiguration.SUCC()));
     }
 
+    /**
+     * verify if message is signed by a public key
+     * @param entity
+     * @return
+     */
     public String verify(SignDataEntity entity){
         String hexMsg = entity.getMsg();
         String hexSig = entity.getSig();
@@ -250,6 +270,8 @@ public class ElaService {
         return JSON.toJSONString(new ReturnMsgEntity().setResult(did).setStatus(retCodeConfiguration.SUCC()));
 
     }
+
+
 
 
     /**
@@ -368,5 +390,224 @@ public class ElaService {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    public String transfer(TransferParamEntity param) throws Exception {
 
+        List<LinkedHashMap> rcv = (List<LinkedHashMap>) param.getReceiver();
+        List<String> addrList = new ArrayList<>();
+        List<Double> valList = new ArrayList<>();
+        Double totalAmt = 0.0;
+        for(int i=0;i<rcv.size();i++){
+            Map m = rcv.get(i);
+            addrList.add((String)m.get("address"));
+            Double tmpAmt = Double.valueOf((String)m.get("amount"));
+            valList.add(tmpAmt);
+            totalAmt += tmpAmt;
+        }
+
+        String senderPrivateKey = param.getSenderPrivateKey();
+        String senderAddr = param.getSenderAddr();
+        String memo = param.getMemo();
+
+        String response = gen(totalAmt, senderPrivateKey , senderAddr,
+                addrList, valList, memo);
+        Map<String,Object> rawM = (Map<String, Object>) ((Map<String, Object>) JSON.parse(response)).get("Result");
+        String rawTx = (String) rawM.get("rawTx");
+        String txHash = (String) rawM.get("txHash");
+        logger.info("rawTx:" + rawTx + ", txHash :" + txHash);
+
+        sendTx(rawTx,txHash);
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(txHash.toLowerCase()).setStatus(retCodeConfiguration.SUCC()));
+    }
+
+    /**
+     * send a transaction to blockchain.
+     * @param smAmt
+     * @param privateKey
+     * @param addr
+     * @param addrs
+     * @param amts
+     * @param data
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("rawtypes")
+    public String gen(double smAmt , String privateKey , String addr ,List<String> addrs , List<Double> amts , String data) throws Exception {
+
+        String utxoStr = getUtxoByAddr(addr);
+
+        List<Map> utxo = stripUtxo(utxoStr);
+        if(utxo == null){
+            throw new ApiRequestDataException("no UTXO");
+        }
+        String response = genTx(smAmt, utxo, privateKey, addr, addrs, amts, data);
+
+        return response;
+    }
+
+    /**
+     * generate raw transaction.
+     * @param smAmt the total spend money
+     * @param utxolm utxo
+     * @param privateKey sender private key
+     * @param addr sender public address
+     * @param addrs receiver addresses
+     * @param amts receiver output money
+     * @param data memo data
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
+    public String genTx(double smAmt , List<Map> utxolm , String privateKey , String addr ,List<String> addrs , List<Double> amts , String data) throws Exception {
+
+        if(addrs == null || addrs.size() == 0) {
+            throw new RuntimeException("output can not be blank");
+        }
+
+        Map<String,Object> paraListMap = new HashMap<>();
+        List txList = new ArrayList<>();
+        paraListMap.put("Transactions", txList);
+        Map<String,Object> txListMap = new HashMap<>();
+        txList.add(txListMap);
+        if(!StrKit.isBlank(data)) {
+            txListMap.put("Memo", data);
+        }
+
+        int index = -1;
+        double spendMoney = 0.0;
+        boolean hasEnoughFee = false;
+        for( int i=0; i<utxolm.size(); i++) {
+            index = i;
+            spendMoney += Double.valueOf(utxolm.get(i).get("Value")+"");
+            if( Math.round(spendMoney * basicConfiguration.ONE_ELA()) >= Math.round((smAmt + basicConfiguration.FEE()) * basicConfiguration.ONE_ELA())) {
+                hasEnoughFee = true;
+                break;
+            }
+        }
+
+        if(!hasEnoughFee) {
+            return null;
+        }
+
+        List utxoInputsArray = new ArrayList<>();
+        txListMap.put("UTXOInputs", utxoInputsArray);
+        for(int i=0;i<=index;i++) {
+            Map<String,Object> utxoInputsDetail = new HashMap<>();
+            Map<String,Object> utxoM = utxolm.get(i);
+            utxoInputsDetail.put("txid",  utxoM.get("Txid"));
+            utxoInputsDetail.put("index",  utxoM.get("Index"));
+            utxoInputsDetail.put("privateKey",  privateKey);
+            utxoInputsDetail.put("address",  addr);
+            utxoInputsArray.add(utxoInputsDetail);
+        }
+        List utxoOutputsArray = new ArrayList<>();
+        txListMap.put("Outputs", utxoOutputsArray);
+        for(int i=0;i<addrs.size();i++) {
+            Map<String,Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail.put("address", addrs.get(i));
+            utxoOutputsDetail.put("amount", Math.round(amts.get(i) * basicConfiguration.ONE_ELA()));
+            utxoOutputsArray.add(utxoOutputsDetail);
+        }
+        double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
+        if(Math.round(leftMoney * basicConfiguration.ONE_ELA()) > Math.round(basicConfiguration.FEE() * basicConfiguration.ONE_ELA())) {
+            Map<String,Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail.put("address", addr);
+            utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+            utxoOutputsArray.add(utxoOutputsDetail);
+        }
+        JSONObject par = new JSONObject();
+        par.accumulateAll(paraListMap);
+        logger.info("sending : " + par);
+        String rawTx = null ;
+        rawTx = ElaKit.genRawTransaction(par);
+        logger.info("receiving : " + rawTx);
+        return rawTx;
+    }
+
+    @SuppressWarnings("static-access")
+    public String sendTx(String rawData , String txHash) {
+        RawTxEntity entity = new RawTxEntity();
+        entity.setData(rawData);
+        return sendRawTx(entity);
+    }
+
+    /**
+     * set did info into memo
+     * @param info
+     * @return
+     * @throws Exception
+     */
+    public String setDidInfo(DidInfoEntity info) throws Exception{
+        String data = null;
+        try {
+            data = JSON.toJSONString(info.getInfo());
+        }catch (Exception ex){
+            throw new ApiRequestDataException("DID info must be a json object");
+        }
+        String privateKey = info.getPrivateKey();
+        String recevAddr = didConfiguration.getAddress();
+        String fee = didConfiguration.getFee();
+        TransferParamEntity transferParamEntity = new TransferParamEntity();
+        SignDataEntity signDataEntity = new SignDataEntity();
+        signDataEntity.setPrivateKey(privateKey);
+        signDataEntity.setMsg(data);
+        String response = sign(signDataEntity);
+        Map respMap = (Map)JSON.parse(response);
+        String rawMemo = JSON.toJSONString(respMap.get("result"));
+        logger.debug("rawMemo:{}",rawMemo);
+        transferParamEntity.setMemo(rawMemo);
+        transferParamEntity.setSenderAddr(Ela.getAddressFromPrivate(privateKey));
+        transferParamEntity.setSenderPrivateKey(privateKey);
+        List<Map> receiverList = new ArrayList<>();
+        Map receivMap = new HashMap();
+        receivMap.put("address",recevAddr);
+        receivMap.put("amount",fee);
+        receiverList.add(receivMap);
+        transferParamEntity.setReceiver(receiverList);
+        return transfer(transferParamEntity);
+    }
+
+    private final static String DID_NO_SUCH_INFO = "No such info";
+    /**
+     * get did info from memo
+     * @param entity
+     * @return
+     * @throws Exception
+     */
+    public String getDidInfo(DidInfoEntity entity) throws Exception{
+        List<String> txidList = entity.getTxIds();
+        if(txidList.size() == 0){
+            return JSON.toJSONString(new ReturnMsgEntity().setResult(DID_NO_SUCH_INFO).setStatus(retCodeConfiguration.SUCC()));
+        }
+        String key = entity.getKey();
+        //TODO deal with the same field
+        for(int i=0;i<txidList.size();i++){
+            String txid = txidList.get(i);
+            String txinfo = getTransactionByHash(txid);
+            Map txinfoMap = (Map)JSON.parse(txinfo);
+            Map resultMap = (Map)txinfoMap.get("result");
+            List<Map> attrList = (List)resultMap.get("attributes");
+            String hexData = (String)attrList.get(0).get("data");
+            Map rawMap = (Map)JSON.parse(new String(DatatypeConverter.parseHexBinary(hexData)));
+            SignDataEntity signDataEntity = new SignDataEntity();
+            String hexMsg = (String)rawMap.get("msg");
+            signDataEntity.setMsg(hexMsg);
+            signDataEntity.setSig((String)rawMap.get("sig"));
+            signDataEntity.setPub((String)rawMap.get("pub"));
+            String verifyResp = verify(signDataEntity);
+            Map verifyMap = (Map)JSON.parse(verifyResp);
+            Boolean verified = (Boolean)verifyMap.get("result");
+            if (!verified){
+                continue;
+            }else{
+                Map rawMsgMap = (Map)JSON.parse(new String(DatatypeConverter.parseHexBinary(hexMsg)));
+                Object v = rawMsgMap.get(key);
+                if (v == null){
+                    continue;
+                }
+                return JSON.toJSONString(new ReturnMsgEntity().setResult(v).setStatus(retCodeConfiguration.SUCC()));
+            }
+        }
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(DID_NO_SUCH_INFO).setStatus(retCodeConfiguration.SUCC()));
+    }
 }

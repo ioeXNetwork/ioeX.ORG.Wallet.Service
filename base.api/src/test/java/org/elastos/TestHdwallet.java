@@ -33,8 +33,8 @@ public class TestHdwallet {
                 "                \"UTXOInputs\": [\n" +
                 "                    {\n" +
                 "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\",\n" +
-                "                        \"txid\": \"7736d0be003e86039f25bec1128a8eba12d67bb8a032947159f7617dbd368486\",\n" +
-                "                        \"index\": 0\n" +
+                "                        \"txid\": \"fa9bcb8b2f3a3a1e627284ad8425faf70fa64146b88a3aceac538af8bfeffd91\",\n" +
+                "                        \"index\": 1\n" +
                 "                    }\n" +
                 "                ],\n" +
                 "                \"Fee\": 100,\n" +
@@ -44,7 +44,7 @@ public class TestHdwallet {
                 "                        \"address\": \"EPzxJrHefvE7TCWmEGQ4rcFgxGeGBZFSHw\"\n" +
                 "                    },\n" +
                 "                    {\n" +
-                "                        \"amount\": 99998900,\n" +
+                "                        \"amount\": 99997800,\n" +
                 "                        \"address\": \"EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV\"\n" +
                 "                    }\n" +
                 "                ]\n" +
@@ -60,7 +60,6 @@ public class TestHdwallet {
 
     }
     @Test
-    @Ignore
     public void TestGenRawTx() {
         try {
             Map m = (Map) JSON.parse(txInfo);
