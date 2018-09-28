@@ -6,6 +6,7 @@
  */
 package org.elastos.conf;
 
+import org.elastos.entity.ChainType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("node")
 public class NodeConfiguration {
     private String prefix              ;
+    private String didPrefix           ;
     private String connectionCount     ;
     private String state               ;
     private String blockTxByHeight     ;
@@ -70,7 +72,10 @@ public class NodeConfiguration {
         return prefix + blockHash;
     }
 
-    public String getTransaction() {
+    public String getTransaction(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + transaction;
+        }
         return prefix + transaction;
     }
 
@@ -90,11 +95,17 @@ public class NodeConfiguration {
         return prefix + utxoByAsset;
     }
 
-    public String getUtxoByAddr() {
+    public String getUtxoByAddr(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + utxoByAddr;
+        }
         return prefix + utxoByAddr;
     }
 
-    public String sendRawTransaction() {
+    public String sendRawTransaction(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + sendRawTransaction;
+        }
         return prefix + sendRawTransaction;
     }
 
@@ -174,4 +185,15 @@ public class NodeConfiguration {
         this.restart = restart;
     }
 
+    public String getDidPrefix() {
+        return didPrefix;
+    }
+
+    public void setDidPrefix(String didPrefix) {
+        this.didPrefix = didPrefix;
+    }
+
+    public String getSendRawTransaction() {
+        return sendRawTransaction;
+    }
 }

@@ -14,9 +14,17 @@ package org.elastos.entity;
 public class RawTxEntity {
     private String method = "sendrawtransaction";
     private String data;
-
+    private ChainType type;
     public String getMethod() {
         return method;
+    }
+
+    public ChainType getType() {
+        return type;
+    }
+
+    public void setType(ChainType type) {
+        this.type = type;
     }
 
     public void setMethod(String method) {

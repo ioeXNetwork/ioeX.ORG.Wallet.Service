@@ -75,7 +75,8 @@ public class ElaService {
 
     public String sendRawTx(RawTxEntity rawTxEntity){
         String rawTx = JSON.toJSONString(rawTxEntity);
-        ReturnMsgEntity.ELAReturnMsg msg = JsonUtil.jsonStr2Entity(HttpKit.post(nodeConfiguration.sendRawTransaction(),rawTx),ReturnMsgEntity.ELAReturnMsg.class);
+        ChainType type = rawTxEntity.getType();
+        ReturnMsgEntity.ELAReturnMsg msg = JsonUtil.jsonStr2Entity(HttpKit.post(nodeConfiguration.sendRawTransaction(type),rawTx),ReturnMsgEntity.ELAReturnMsg.class);
         long status = 0;
         if(msg.getError() == 0){
             status = retCodeConfiguration.SUCC();
@@ -97,7 +98,7 @@ public class ElaService {
         List<List<Map>> utxoList = new ArrayList<>();
         for (int i = 0; i < inputAddrs.length; i++) {
 
-            String utxoStr = getUtxoByAddr(inputAddrs[i]);
+            String utxoStr = getUtxoByAddr(inputAddrs[i],ChainType.MAIN_CHAIN);
 
             List<Map> utxo = stripUtxo(utxoStr);
 
@@ -156,7 +157,17 @@ public class ElaService {
      */
     public String getTransactionByHash(String hash){
 
-        return reqChainData(nodeConfiguration.getTransaction()+ hash);
+        return reqChainData(nodeConfiguration.getTransaction(ChainType.MAIN_CHAIN)+ hash);
+    }
+
+    /**
+     * get transaction by hash
+     * @param hash
+     * @return
+     */
+    public String getTransactionByHash(String hash,ChainType type){
+
+        return reqChainData(nodeConfiguration.getTransaction(type)+ hash);
     }
 
     /**
@@ -166,7 +177,7 @@ public class ElaService {
      */
     public String getBalance(String address){
 
-        String result = HttpKit.get(nodeConfiguration.getUtxoByAddr()+ address);
+        String result = HttpKit.get(nodeConfiguration.getUtxoByAddr(ChainType.MAIN_CHAIN)+ address);
 
         Map<String,Object>  resultMap = (Map<String,Object>) JSON.parse(result);
 
@@ -200,7 +211,7 @@ public class ElaService {
      */
     public String getUtxos(String address){
 
-        return reqChainData(nodeConfiguration.getUtxoByAddr()+ address);
+        return reqChainData(nodeConfiguration.getUtxoByAddr(ChainType.MAIN_CHAIN)+ address);
     }
 
 
@@ -383,9 +394,9 @@ public class ElaService {
     }
 
 
-    private String getUtxoByAddr(String addr) {
+    private String getUtxoByAddr(String addr,ChainType type) {
 
-        String result = HttpKit.get(nodeConfiguration.getUtxoByAddr() + addr);
+        String result = HttpKit.get(nodeConfiguration.getUtxoByAddr(type) + addr);
 
         return result;
     }
@@ -408,15 +419,15 @@ public class ElaService {
         String senderPrivateKey = param.getSenderPrivateKey();
         String senderAddr = param.getSenderAddr();
         String memo = param.getMemo();
-
+        ChainType type = param.getType();
         String response = gen(totalAmt, senderPrivateKey , senderAddr,
-                addrList, valList, memo);
+                addrList, valList, memo,type);
         Map<String,Object> rawM = (Map<String, Object>) ((Map<String, Object>) JSON.parse(response)).get("Result");
         String rawTx = (String) rawM.get("rawTx");
         String txHash = (String) rawM.get("txHash");
         logger.info("rawTx:" + rawTx + ", txHash :" + txHash);
 
-        sendTx(rawTx,txHash);
+        sendTx(rawTx,type);
         return JSON.toJSONString(new ReturnMsgEntity().setResult(txHash.toLowerCase()).setStatus(retCodeConfiguration.SUCC()));
     }
 
@@ -432,9 +443,9 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings("rawtypes")
-    public String gen(double smAmt , String privateKey , String addr ,List<String> addrs , List<Double> amts , String data) throws Exception {
+    public String gen(double smAmt , String privateKey , String addr ,List<String> addrs , List<Double> amts , String data,ChainType type) throws Exception {
 
-        String utxoStr = getUtxoByAddr(addr);
+        String utxoStr = getUtxoByAddr(addr,type);
 
         List<Map> utxo = stripUtxo(utxoStr);
         if(utxo == null){
@@ -525,9 +536,10 @@ public class ElaService {
     }
 
     @SuppressWarnings("static-access")
-    public String sendTx(String rawData , String txHash) {
+    public String sendTx(String rawData,ChainType type) {
         RawTxEntity entity = new RawTxEntity();
         entity.setData(rawData);
+        entity.setType(type);
         return sendRawTx(entity);
     }
 
@@ -564,6 +576,7 @@ public class ElaService {
         receivMap.put("amount",fee);
         receiverList.add(receivMap);
         transferParamEntity.setReceiver(receiverList);
+        transferParamEntity.setType(ChainType.DID_SIDECHAIN);
         return transfer(transferParamEntity);
     }
 
@@ -583,8 +596,12 @@ public class ElaService {
         //TODO deal with the same field
         for(int i=0;i<txidList.size();i++){
             String txid = txidList.get(i);
-            String txinfo = getTransactionByHash(txid);
+            String txinfo = getTransactionByHash(txid,ChainType.DID_SIDECHAIN);
             Map txinfoMap = (Map)JSON.parse(txinfo);
+            Object or = txinfoMap.get("");
+            if ((or instanceof Map) == false){
+                continue;
+            }
             Map resultMap = (Map)txinfoMap.get("result");
             List<Map> attrList = (List)resultMap.get("attributes");
             String hexData = (String)attrList.get(0).get("data");

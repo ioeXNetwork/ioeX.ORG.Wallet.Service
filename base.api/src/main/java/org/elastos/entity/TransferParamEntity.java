@@ -12,33 +12,7 @@ public class TransferParamEntity<T> {
 	private String senderPrivateKey;
 	private String memo;
 	private T receiver;
-//    private List<String> rcvAddrList;
-//    private List<Double> rcvAmtList;
-//    private Double totalAmt;
-
-//    public List<String> getRcvAddrList() {
-//        return rcvAddrList;
-//    }
-//
-//    public void setRcvAddrList(List<String> rcvAddrList) {
-//        this.rcvAddrList = rcvAddrList;
-//    }
-//
-//    public List<Double> getRcvAmtList() {
-//        return rcvAmtList;
-//    }
-//
-//    public void setRcvAmtList(List<Double> rcvAmtList) {
-//        this.rcvAmtList = rcvAmtList;
-//    }
-//
-//    public Double getTotalAmt() {
-//        return totalAmt;
-//    }
-//
-//    public void setTotalAmt(Double totalAmt) {
-//        this.totalAmt = totalAmt;
-//    }
+	private ChainType type;
 
     public String getSenderAddr() {
         return senderAddr;
@@ -70,5 +44,13 @@ public class TransferParamEntity<T> {
 
     public void setReceiver(T receiver) {
         this.receiver = receiver;
+    }
+
+    public ChainType getType() {
+        return type;
+    }
+
+    public void setType(ChainType type) {
+        this.type = type;
     }
 }
