@@ -118,7 +118,7 @@ public class ElaService {
      */
     public String getCurrentHeight(){
 
-        return reqChainData(nodeConfiguration.getBlockHeight());
+        return reqChainData(nodeConfiguration.getBlockHeight(ChainType.MAIN_CHAIN));
     }
 
     /**
@@ -127,7 +127,7 @@ public class ElaService {
      */
     public String getBlockTxsByHeight(String height){
 
-        return reqChainData(nodeConfiguration.getBlockTxByHeight()+ height);
+        return reqChainData(nodeConfiguration.getBlockTxByHeight(ChainType.MAIN_CHAIN)+ height);
     }
 
     /**
@@ -137,7 +137,7 @@ public class ElaService {
      */
     public String getBlockByHeight(String height){
 
-        return reqChainData(nodeConfiguration.getBlockByHeight()+ height);
+        return reqChainData(nodeConfiguration.getBlockByHeight(ChainType.MAIN_CHAIN)+ height);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ElaService {
      */
     public String getBlockByHash(String hash){
 
-        return reqChainData(nodeConfiguration.getBlockByhash()+ hash);
+        return reqChainData(nodeConfiguration.getBlockByhash(ChainType.MAIN_CHAIN)+ hash);
     }
 
     /**
@@ -598,11 +598,11 @@ public class ElaService {
             String txid = txidList.get(i);
             String txinfo = getTransactionByHash(txid,ChainType.DID_SIDECHAIN);
             Map txinfoMap = (Map)JSON.parse(txinfo);
-            Object or = txinfoMap.get("");
-            if ((or instanceof Map) == false){
+            Object orst = txinfoMap.get("result");
+            if ((orst instanceof Map) == false){
                 continue;
             }
-            Map resultMap = (Map)txinfoMap.get("result");
+            Map resultMap = (Map)orst;
             List<Map> attrList = (List)resultMap.get("attributes");
             String hexData = (String)attrList.get(0).get("data");
             Map rawMap = (Map)JSON.parse(new String(DatatypeConverter.parseHexBinary(hexData)));

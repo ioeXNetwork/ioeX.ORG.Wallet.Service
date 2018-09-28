@@ -10,9 +10,45 @@ Nodela has a Restful API with URL endpoints corresponding to actions that users 
 
 .. _chain-related-information:
 
-Chain Related Api
+ELA Mainchain API
 =================================
 using the following api ,we can easyly get a glimps of what is going on in the blockchain.
+
+create a ELA wallet
+-----------------------------------------
+generate a elastos wallet 
+
+.. http:get:: /api/1/createWallet
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /api/1/createWallet HTTP/1.1
+      Host: localhost
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result":{
+              "privateKey":"492F67D441F563AA4746497EB77C89906A3D3C06B242030BA966BC5604482EF7",
+              "publicKey":"035EBC0D70C9E34006C932D7BB47474159C136A8944C92416A94481212379751CB",
+              "address":"EJonBz8U1gYnANjSafRF9EAJW9KTwRKd6x"
+          },
+          "status":200
+      }
+
+   :statuscode 200:   no error
+   :statuscode 400:   bad request
+   :statuscode 404:   not found request
+   :statuscode 500:   internal error
+   :statuscode 10001: process error
+   
 
 
 Check the current network block height
@@ -94,10 +130,10 @@ Signing message using private key
     Host: localhost:8090
     Content-Type: application/json
 
-    {
-        "privateKey":"0D5D7566CA36BC05CFF8E3287C43977DCBB492990EA1822643656D85B3CB0226",
-        "msg":"你好，世界"
-    }
+      {
+          "privateKey":"0D5D7566CA36BC05CFF8E3287C43977DCBB492990EA1822643656D85B3CB0226",
+          "msg":"你好，世界"
+      }
 
    **Example response**:
 
@@ -127,14 +163,14 @@ verify message signed by a public address's private key
    .. sourcecode:: http
 
     POST /api/1/verify HTTP/1.1
-    Host: localhost:8090
+    Host: localhost
     Content-Type: application/json
 
-    {
-        "msg": "E4BDA0E5A5BDEFBC8CE4B896E7958D",
-        "pub": "02C3F59F337814C6715BBE684EC525B9A3CFCE55D9DEEC53E1EDDB0B352DBB4A54",
-        "sig": "E6BB279CBD4727B41F2AA8B18E99B3F99DECBB8737D284FFDD408B356C912EE21AD478BCC0ABD65246938F17DDE64258FD8A9684C0649B23AE1318F7B9CEEEC7"
-    }
+      {
+          "msg": "E4BDA0E5A5BDEFBC8CE4B896E7958D",
+          "pub": "02C3F59F337814C6715BBE684EC525B9A3CFCE55D9DEEC53E1EDDB0B352DBB4A54",
+          "sig": "E6BB279CBD4727B41F2AA8B18E99B3F99DECBB8737D284FFDD408B356C912EE21AD478BCC0ABD65246938F17DDE64258FD8A9684C0649B23AE1318F7B9CEEEC7"
+      }
 
    **Example response**:
 
@@ -149,9 +185,96 @@ verify message signed by a public address's private key
           "status": 200
       }
 
+create offline transaction
+-----------------------------------------
+create a offline transaction utxo json data , you should sign it using private key 
+
+.. http:post:: /api/1/createTx
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/currHeight HTTP/1.1
+    Host: localhost
+
+      {
+          "inputs"  : ["EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV"],
+           "outputs" : [{
+                  "addr":"EPzxJrHefvE7TCWmEGQ4rcFgxGeGBZFSHw",
+                   "amt" :1000
+               }]
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+        "result": {
+            "Transactions": [
+                {
+                    "UTXOInputs": [
+                        {
+                            "address": "EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV",
+                            "txid": "fa9bcb8b2f3a3a1e627284ad8425faf70fa64146b88a3aceac538af8bfeffd91",
+                            "index": 1
+                        }
+                    ],
+                    "Fee": 100,
+                    "Outputs": [
+                        {
+                            "amount": 1000,
+                            "address": "EPzxJrHefvE7TCWmEGQ4rcFgxGeGBZFSHw"
+                        },
+                        {
+                            "amount": 99997800,
+                            "address": "EU3e23CtozdSvrtPzk9A1FeC9iGD896DdV"
+                        }
+                    ]
+                }
+            ]
+        },
+        "status": 200
+    }
+
+
+send offline transaction
+-----------------------------------------
+send raw transaction 
+
+.. http:post:: /api/1/sendRawTx
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/sendRawTx HTTP/1.1
+    Host: localhost
+
+      {
+         "data":"0200010013313637333832373132343538363832353937350191FDEFBFF88A53ACCE3A8AB84641A60FF7FA2584AD8472621E3A3A2F8BCB9BFA01000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A3E80300000000000000000000214B177C93439E1E31B1CDA7C3B290F977C74CD0BFB037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A368D8F5050000000000000000217779F85469B90D2F648D6BA771FB641D1782715E000000000141407009A5DAB9A8730ED424EF50217180D25AB81F0BB6E8257A672F9618F3CF13FD32D114DE171460C23532319A85614C460E83699C833E576B5C4782232299A2DF232103293CD3A3359B65FEA091CB6260675BD03A3C5E29CFFB504136A508E9BBBD5A8BAC"
+      }
+    
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "1f4432635bcf8c347f2bc20b7906c8c6c195f51beb3426e5f8d6a9e4cc073cf3",
+          "status": 200
+      }
+
+
 .. _did-related-api:
 
-DID Related Api 
+ELA DID Sidechain API
 ====================
 using the following api , get the did related information
 
@@ -209,4 +332,70 @@ using private key to retrive did .
         "status": 200
       }
     
+
+Set DID information 
+----------------------
+setting information into did. using did related privateKey .
+
+.. http:post:: /api/1/setDidInfo
+   
+   **Example Request**:
+
+   .. sourcecode:: http
+
+      POST /api/1/setDidInfo HTTP/1.1
+      Host: localhost
+
+        {
+            "privateKey":"FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F",
+            "info":{
+                "name":"clark"
+            }
+        }
+
+   **Example Response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "1170c18870d2547207b85bd9859dc97886ca8f570399da0bcfb40a0bdc2a1b20",
+          "status": 200
+      }
+
+Get DID information 
+----------------------
+get value from did using transaction hash and `key` 
+
+.. http:post:: /api/1/getDidInfo
+   
+   **Example Request**:
+
+   .. sourcecode:: http
+
+      POST /api/1/getDidInfo HTTP/1.1
+      Host: localhost
+
+        {
+            "txIds":[
+                "1170C18870D2547207B85BD9859DC97886CA8F570399DA0BCFB40A0BDC2A1B20"
+            ],
+            "key":"name"
+        }
+
+   **Example Response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "clark",
+          "status": 200
+      }
+
+
 

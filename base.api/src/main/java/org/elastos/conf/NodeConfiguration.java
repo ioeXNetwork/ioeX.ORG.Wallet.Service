@@ -38,37 +38,57 @@ public class NodeConfiguration {
     private String utxoByAddr          ;
     private String sendRawTransaction  ;
     private String transactionPool     ;
-    private String restart             ;
 
     public String getPrefix() {
         return prefix;
     }
 
-    public String getConnectionCount() {
+    public String getConnectionCount(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + connectionCount;
+        }
         return prefix + connectionCount;
     }
 
-    public String getState() {
+    public String getState(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + state;
+        }
         return prefix + state;
     }
 
-    public String getBlockTxByHeight() {
+    public String getBlockTxByHeight(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + blockTxByHeight;
+        }
         return prefix + blockTxByHeight;
     }
 
-    public String getBlockByHeight() {
+    public String getBlockByHeight(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + blockByHeight;
+        }
         return prefix + blockByHeight;
     }
 
-    public String getBlockByhash() {
+    public String getBlockByhash(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + blockByhash;
+        }
         return prefix + blockByhash;
     }
 
-    public String getBlockHeight() {
+    public String getBlockHeight(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + blockHeight;
+        }
         return prefix + blockHeight;
     }
 
-    public String getBlockHash() {
+    public String getBlockHash(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + blockHash;
+        }
         return prefix + blockHash;
     }
 
@@ -79,19 +99,31 @@ public class NodeConfiguration {
         return prefix + transaction;
     }
 
-    public String getAsset() {
+    public String getAsset(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + asset;
+        }
         return prefix + asset;
     }
 
-    public String getBalanceByAddr() {
+    public String getBalanceByAddr(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + balanceByAddr;
+        }
         return prefix + balanceByAddr;
     }
 
-    public String getBalanceByAsset() {
+    public String getBalanceByAsset(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + balanceByAsset;
+        }
         return prefix + balanceByAsset;
     }
 
-    public String getUtxoByAsset() {
+    public String getUtxoByAsset(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + utxoByAsset;
+        }
         return prefix + utxoByAsset;
     }
 
@@ -109,14 +141,12 @@ public class NodeConfiguration {
         return prefix + sendRawTransaction;
     }
 
-    public String getTransactionPool() {
+    public String getTransactionPool(ChainType type) {
+        if(type == ChainType.DID_SIDECHAIN){
+            return didPrefix + transactionPool;
+        }
         return prefix + transactionPool;
     }
-
-    public String getRestart() {
-        return prefix + restart;
-    }
-
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
@@ -181,10 +211,6 @@ public class NodeConfiguration {
         this.transactionPool = transactionPool;
     }
 
-    public void setRestart(String restart) {
-        this.restart = restart;
-    }
-
     public String getDidPrefix() {
         return didPrefix;
     }
@@ -193,7 +219,4 @@ public class NodeConfiguration {
         this.didPrefix = didPrefix;
     }
 
-    public String getSendRawTransaction() {
-        return sendRawTransaction;
-    }
 }
