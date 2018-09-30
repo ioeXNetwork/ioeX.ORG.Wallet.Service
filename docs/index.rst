@@ -40,7 +40,7 @@ Contents
    :maxdepth: 2
 
    
-   network_type.rst
+   config.rst
    api_guide.rst
 
 

@@ -8,9 +8,9 @@ Introduction
 =============
 Nodela has a Restful API with URL endpoints corresponding to actions that users can perform with their channels. The endpoints accept and return JSON encoded objects. The API URL path always contains the API version in order to differentiate queries to different API versions. All queries start with: ``/api/<version>/`` where ``<version>`` is an integer representing the current API version.
 
-.. _chain-related-information:
+.. mainchain-api:
 
-ELA Mainchain API
+Mainchain API
 =================================
 using the following api ,we can easyly get a glimps of what is going on in the blockchain.
 
@@ -350,9 +350,9 @@ using private key to send transaction
           "status": 200
       }
 
-.. _did-related-api:
+.. _did-sidechain-api:
 
-ELA DID Sidechain API
+DID Sidechain API
 ====================
 using the following api , get the did related information
 
@@ -520,9 +520,9 @@ using private key to send transaction
           "status": 200
       }
 
-.. _crosschain-related-api:
+.. cross-chain--api:
 
-ELA Cross Chain API
+Cross Chain API
 ====================
 using the following api , transfer asset between mainchain and DID Sidechain
 
@@ -609,4 +609,3 @@ using this api you can transfer money from did sidechain to main chain.
           "result": "3CDEB61D4CC4541591CDE4B15EB391385715C713D6709FE84381481558C2B69A",
           "status": 200
       }      
-
