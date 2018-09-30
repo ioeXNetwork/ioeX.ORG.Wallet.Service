@@ -83,6 +83,40 @@ tells you the current block height of the network
    :statuscode 500:   internal error
    :statuscode 10001: process error
    
+
+get the balance of address
+-----------------------------------------
+get the balance of the provided public address
+
+.. http:get:: /api/1/balance/(string:`public_address`)
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    GET /api/1/balance/EbunxcqXie6UExs5SXDbFZxr788iGGvAs9 HTTP/1.1
+    Host: localhost
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Vary: Accept
+      Content-Type: application/json
+
+      {
+          "result":"2.11059400",
+          "status":200
+      }
+
+   :statuscode 200:   no error
+   :statuscode 400:   bad request
+   :statuscode 404:   not found request
+   :statuscode 500:   internal error
+   :statuscode 10001: process error  
+
+
 Get the transactions of specific height   
 -----------------------------------------
 using height to get block contained transactions 
@@ -195,7 +229,7 @@ create a offline transaction utxo json data , you should sign it using private k
 
    .. sourcecode:: http
 
-    POST /api/1/currHeight HTTP/1.1
+    POST /api/1/createTx HTTP/1.1
     Host: localhost
 
       {
@@ -271,6 +305,50 @@ send raw transaction
           "status": 200
       }
 
+transfer ELA using private key 
+-----------------------------------------
+using private key to send transaction 
+
+.. http:post:: /api/1/transfer
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/transfer HTTP/1.1
+    Host: localhost
+
+      {
+          "sender":[
+              {
+                  "address":"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv",
+                  "privateKey":"C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D"
+              },
+              {
+                  "address":"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9",
+                  "privateKey":"FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F"
+              }
+          ],
+          "memo":"测试",
+          "receiver":[
+              {
+                  "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                  "amount":"2.4"
+              }
+          ]
+      }
+    
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "7bcb5fbf7d6e8f673d50999709d695030dbd6d60a00281221540498cf2830f59",
+          "status": 200
+      }
 
 .. _did-related-api:
 
@@ -397,5 +475,140 @@ get value from did using transaction hash and `key`
           "status": 200
       }
 
+transfer DID asset using private key 
+-----------------------------------------
+using private key to send transaction 
 
+.. http:post:: /api/1/did/transfer
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/did/transfer HTTP/1.1
+    Host: localhost
+
+      {
+        "sender":[
+            {
+                "address":"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv",
+                "privateKey":"C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D"
+            },
+            {
+                "address":"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9",
+                "privateKey":"FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F"
+            }
+        ],
+        "memo":"测试",
+        "receiver":[
+            {
+                "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                "amount":"2.4"
+            }
+        ]
+    }
+    
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "EB291AA789D542ECE75BCF806A375BD905EDD150046FF52D51DF7D149E37FFF5",
+          "status": 200
+      }
+
+.. _crosschain-related-api:
+
+ELA Cross Chain API
+====================
+using the following api , transfer asset between mainchain and DID Sidechain
+
+Mainchain to Sidechain transfer
+------------------------------------------
+using this api you can transfer money from mainchain to did sidechain.
+
+.. http:post:: /api/1/cross/m2d/transfer
+   
+   **Example Request**:
+
+   .. sourcecode:: http
+
+      POST /api/1/cross/m2d/transfer HTTP/1.1
+      Host: localhost
+
+        {
+          "sender":[
+              {
+                  "address":"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv",
+                  "privateKey":"0D5D7566CA36BC05CFF8E3287C43977DCBB492990EA1822643656D85B3CB0226"
+              },
+              {
+                  "address":"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9",
+                  "privateKey":"FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F"
+              }
+          ],
+          "memo":"测试",
+          "receiver":[
+              {
+                  "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                  "amount":"0.01"
+              }
+          ]
+      }
+
+   **Example Response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "B125D3DE38E6F3D17F9DC565996FDB00282BDD46A20F3B25C8EEDA99FC56EABB",
+          "status": 200
+      }
+
+Sidechain to Mainchain transfer
+------------------------------------------
+using this api you can transfer money from did sidechain to main chain.
+
+.. http:post:: /api/1/cross/dm2/transfer
+   
+   **Example Request**:
+
+   .. sourcecode:: http
+
+      POST /api/1/cross/d2m/transfer HTTP/1.1
+      Host: localhost
+
+        {
+          "sender":[
+              {
+                  "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                  "privateKey":"C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D"
+              }
+          ],
+          "memo":"测试",
+          "receiver":[
+              {
+                  "address":"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv",
+                  "amount":"0.089698"
+              }
+          ]
+      }
+
+   **Example Response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "3CDEB61D4CC4541591CDE4B15EB391385715C713D6709FE84381481558C2B69A",
+          "status": 200
+      }      
 

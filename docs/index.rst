@@ -6,11 +6,11 @@ Nodela
     :alt: elastos logo
     :align: center
 
-Nodela provide access to elastos network. Our easy to use API and developer tools provide secure, reliable, and scalable access to elastos network. We provide the infrastructure for your decentralized applications so you can focus on the features.
+Nodela provide access to elastos network. Our easy to use API and developer tools provide secure, reliable, and scalable access to elastos network. 
 
 
 .. note::
-    you can also construct your own private network using `Node <https://github.com/elastos/Elastos.ELA>`_
+    you can also construct your own network using `Node <https://github.com/elastos/Elastos.ELA>`_
 
 .. warning::
     Since software is written by humans, it can have bugs. Thus, if you have questions you are always welcome to issue your problem.

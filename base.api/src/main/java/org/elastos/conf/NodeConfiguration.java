@@ -93,7 +93,7 @@ public class NodeConfiguration {
     }
 
     public String getTransaction(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
+        if(type == ChainType.DID_SIDECHAIN ){
             return didPrefix + transaction;
         }
         return prefix + transaction;
@@ -114,28 +114,28 @@ public class NodeConfiguration {
     }
 
     public String getBalanceByAsset(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
+        if(type == ChainType.DID_SIDECHAIN ){
             return didPrefix + balanceByAsset;
         }
         return prefix + balanceByAsset;
     }
 
     public String getUtxoByAsset(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
+        if(type == ChainType.DID_SIDECHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN){
             return didPrefix + utxoByAsset;
         }
         return prefix + utxoByAsset;
     }
 
     public String getUtxoByAddr(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
+        if(type == ChainType.DID_SIDECHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN){
             return didPrefix + utxoByAddr;
         }
         return prefix + utxoByAddr;
     }
 
     public String sendRawTransaction(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
+        if(type == ChainType.DID_SIDECHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN){
             return didPrefix + sendRawTransaction;
         }
         return prefix + sendRawTransaction;

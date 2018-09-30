@@ -7,27 +7,18 @@ import java.util.List;
  * @author clark
  * May 23, 2018 10:48:16 AM
  */
-public class TransferParamEntity<T> {
-	private String senderAddr;
-	private String senderPrivateKey;
+public class TransferParamEntity<T,V> {
+	private V sender;
 	private String memo;
 	private T receiver;
 	private ChainType type;
 
-    public String getSenderAddr() {
-        return senderAddr;
+    public V getSender() {
+        return sender;
     }
 
-    public void setSenderAddr(String senderAddr) {
-        this.senderAddr = senderAddr;
-    }
-
-    public String getSenderPrivateKey() {
-        return senderPrivateKey;
-    }
-
-    public void setSenderPrivateKey(String senderPrivateKey) {
-        this.senderPrivateKey = senderPrivateKey;
+    public void setSender(V sender) {
+        this.sender = sender;
     }
 
     public String getMemo() {

@@ -104,4 +104,10 @@ public class TestElaService {
         byte[] program = DatatypeConverter.parseHexBinary(hexStr);
         System.out.println(Util.ToAddress(Util.ToCodeHash(program,1)));
     }
+
+    @Test
+    public void testCal(){
+        double smAmt = 0.089698;
+        System.out.println(Math.round((smAmt + (0.0001 * 2)) * 100000000));
+    }
 }

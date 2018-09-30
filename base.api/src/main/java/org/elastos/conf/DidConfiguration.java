@@ -19,6 +19,24 @@ import org.springframework.stereotype.Component;
 public class DidConfiguration {
     private String address;
     private String fee;
+    private String mainChainAddress;
+    private String burnAddress;
+
+    public String getMainChainAddress() {
+        return mainChainAddress;
+    }
+
+    public void setMainChainAddress(String mainChainAddress) {
+        this.mainChainAddress = mainChainAddress;
+    }
+
+    public String getBurnAddress() {
+        return burnAddress;
+    }
+
+    public void setBurnAddress(String burnAddress) {
+        this.burnAddress = burnAddress;
+    }
 
     public String getFee() {
         return fee;

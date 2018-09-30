@@ -21,9 +21,19 @@ import org.springframework.stereotype.Component;
 public class BasicConfiguration {
     private long ONE_ELA;
     private double FEE;
+    private double CROSS_CHAIN_FEE;
+
+    public double CROSS_CHAIN_FEE(){
+        return CROSS_CHAIN_FEE;
+    }
+
+    public void setCrossChain_FEE(double CROSS_CHAIN_FEE) {
+        this.CROSS_CHAIN_FEE = CROSS_CHAIN_FEE;
+    }
 
     public long ONE_ELA() {
         return ONE_ELA;
+
     }
 
     public void setONE_ELA(long ONE_ELA) {

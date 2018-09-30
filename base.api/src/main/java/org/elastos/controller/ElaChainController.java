@@ -115,6 +115,13 @@ public class ElaChainController extends BaseController{
         return call(reqBody,TransferParamEntity.class,"transfer",service);
     }
 
+    @RequestMapping(value = "/did/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String didTransfer(@RequestBody String reqBody){
+
+        return call(reqBody,TransferParamEntity.class,"didTransfer",service);
+    }
+
     @RequestMapping(value = "/setDidInfo",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     public String setDidInfo(@RequestBody String reqBody){
@@ -128,4 +135,20 @@ public class ElaChainController extends BaseController{
 
         return call(reqBody,DidInfoEntity.class,"getDidInfo",service);
     }
+
+    @RequestMapping(value = "/cross/m2d/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String m2dTransfer(@RequestBody String reqBody){
+
+        return call(reqBody,TransferParamEntity.class,"main2DidCrossTransfer",service);
+    }
+
+    @RequestMapping(value = "/cross/d2m/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String d2mTransfer(@RequestBody String reqBody){
+
+        return call(reqBody,TransferParamEntity.class,"did2MainCrossTransfer",service);
+    }
+
+
 }

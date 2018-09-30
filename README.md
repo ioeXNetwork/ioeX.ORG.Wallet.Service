@@ -3,4 +3,4 @@ Elastos.ORG.Wallet.Service
 
 [Elastos.ORG.Wallet.Service documentation](https://nodela.readthedocs.io)
 
-This repo is used for users who want to access Elastos blockchain but don't want to build his own node , Using API provided by it , you can access ELA blockchain within seconds.
+This repo provide simple HTTP Restful API for developers to interact with elastos blockchain . you may need to construct your own local node to use some of these API , never provide private key to any third party . 

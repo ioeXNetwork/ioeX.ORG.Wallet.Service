@@ -95,12 +95,14 @@ public class ElaService {
     public String genHdTx(HdTxEntity hdTxEntity) throws Exception {
 
         String[] inputAddrs = hdTxEntity.getInputs();
+
         List<List<Map>> utxoList = new ArrayList<>();
+
         for (int i = 0; i < inputAddrs.length; i++) {
 
-            String utxoStr = getUtxoByAddr(inputAddrs[i],ChainType.MAIN_CHAIN);
+            List<String> utxoStr = getUtxoByAddr(inputAddrs[i],ChainType.MAIN_CHAIN);
 
-            List<Map> utxo = stripUtxo(utxoStr);
+            List<Map> utxo = stripUtxo(utxoStr.get(0));
 
             if(utxo != null){
                 utxoList.add(utxo);
@@ -394,17 +396,27 @@ public class ElaService {
     }
 
 
-    private String getUtxoByAddr(String addr,ChainType type) {
+    private List<String> getUtxoByAddr(List<String> addrs,ChainType type) {
+        List<String> rstlist = new ArrayList<>();
+        for(int i=0;i<addrs.size();i++){
+            String addr = addrs.get(i);
+            String result = HttpKit.get(nodeConfiguration.getUtxoByAddr(type) + addr);
+            rstlist.add(result);
+        }
+        return rstlist;
+    }
 
-        String result = HttpKit.get(nodeConfiguration.getUtxoByAddr(type) + addr);
-
-        return result;
+    private List<String> getUtxoByAddr(String addr,ChainType type) {
+        List<String> addrLst = new ArrayList<>();
+        addrLst.add(addr);
+        return getUtxoByAddr(addrLst,type);
     }
 
     @SuppressWarnings("unchecked")
     public String transfer(TransferParamEntity param) throws Exception {
 
         List<LinkedHashMap> rcv = (List<LinkedHashMap>) param.getReceiver();
+        List<Map> sdr = (List<Map>) param.getSender();
         List<String> addrList = new ArrayList<>();
         List<Double> valList = new ArrayList<>();
         Double totalAmt = 0.0;
@@ -415,27 +427,46 @@ public class ElaService {
             valList.add(tmpAmt);
             totalAmt += tmpAmt;
         }
-
-        String senderPrivateKey = param.getSenderPrivateKey();
-        String senderAddr = param.getSenderAddr();
+        List<String> sdrAddrs = new ArrayList<>();
+        List<String> sdrPrivs = new ArrayList<>();
+        for(int i=0;i<sdr.size();i++){
+            Map m = sdr.get(i);
+            String address = (String) m.get("address");
+            String privKey = (String) m.get("privateKey");
+            sdrAddrs.add(address);
+            sdrPrivs.add(privKey);
+        }
         String memo = param.getMemo();
         ChainType type = param.getType();
-        String response = gen(totalAmt, senderPrivateKey , senderAddr,
+        String response = gen(totalAmt, sdrPrivs , sdrAddrs,
                 addrList, valList, memo,type);
-        Map<String,Object> rawM = (Map<String, Object>) ((Map<String, Object>) JSON.parse(response)).get("Result");
+        Object orst =((Map<String, Object>) JSON.parse(response)).get("Result");
+        if ((orst instanceof Map) == false){
+            throw new ApiRequestDataException("Not valid request Data");
+        }
+        Map<String,Object> rawM = (Map<String, Object>)orst;
         String rawTx = (String) rawM.get("rawTx");
         String txHash = (String) rawM.get("txHash");
         logger.info("rawTx:" + rawTx + ", txHash :" + txHash);
 
-        sendTx(rawTx,type);
-        return JSON.toJSONString(new ReturnMsgEntity().setResult(txHash.toLowerCase()).setStatus(retCodeConfiguration.SUCC()));
+        return sendTx(rawTx,type);
+    }
+
+
+    /**
+     * did asset transfer
+     * @param entity
+     * @return
+     * @throws Exception
+     */
+    public String didTransfer(TransferParamEntity entity) throws Exception{
+        entity.setType(ChainType.DID_SIDECHAIN);
+        return transfer(entity);
     }
 
     /**
      * send a transaction to blockchain.
      * @param smAmt
-     * @param privateKey
-     * @param addr
      * @param addrs
      * @param amts
      * @param data
@@ -443,25 +474,141 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings("rawtypes")
-    public String gen(double smAmt , String privateKey , String addr ,List<String> addrs , List<Double> amts , String data,ChainType type) throws Exception {
+    public String gen(double smAmt , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,ChainType type) throws Exception {
 
-        String utxoStr = getUtxoByAddr(addr,type);
-
-        List<Map> utxo = stripUtxo(utxoStr);
-        if(utxo == null){
-            throw new ApiRequestDataException("no UTXO");
+        List<String> utxoStrLst = getUtxoByAddr(sdrAddrs,type);
+        List<List<Map>> utxoTotal = new ArrayList<>();
+        for(int i=0;i<utxoStrLst.size();i++){
+            String utxoStr = utxoStrLst.get(i);
+            List<Map> utxo = stripUtxo(utxoStr);
+            utxoTotal.add(utxo);
         }
-        String response = genTx(smAmt, utxo, privateKey, addr, addrs, amts, data);
 
-        return response;
+        if(utxoTotal == null){
+            throw new ApiRequestDataException(Errors.NOT_ENOUGH_UTXO.val());
+        }
+
+        if(type == ChainType.MAIN_DID_CROSS_CHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN) {
+            return genCrossTx(smAmt,utxoTotal,prvKeys, sdrAddrs, addrs, amts, data,type);
+        }
+
+        return genTx(smAmt, utxoTotal, prvKeys, sdrAddrs, addrs, amts, data);
+    }
+
+    /**
+     *
+     * @param smAmt
+     * @param utxoTotal
+     * @param prvKeys
+     * @param sdrAddrs
+     * @param addrs
+     * @param amts
+     * @param data
+     * @return
+     * @throws Exception
+     */
+    public String genCrossTx(double smAmt , List<List<Map>> utxoTotal , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs ,
+                             List<Double> amts , String data,ChainType type) throws Exception {
+
+        if(addrs == null || addrs.size() == 0) {
+            throw new RuntimeException("output can not be blank");
+        }
+
+        Map<String,Object> paraListMap = new HashMap<>();
+        List txList = new ArrayList<>();
+        paraListMap.put("Transactions", txList);
+        Map<String,Object> txListMap = new HashMap<>();
+        txList.add(txListMap);
+
+        int index = -1;
+        double spendMoney = 0.0;
+        boolean hasEnoughFee = false;
+        int utxoIndex = -1;
+        out :for(int z= 0 ;z < utxoTotal.size();z++){
+            List<Map> utxolm = utxoTotal.get(z);
+            utxoIndex = z;
+            for( int i=0; i<utxolm.size(); i++) {
+                index = i;
+                spendMoney += Double.valueOf(utxolm.get(i).get("Value")+"");
+                if( Math.round(spendMoney * basicConfiguration.ONE_ELA()) >= Math.round((smAmt + (basicConfiguration.CROSS_CHAIN_FEE() * 2)) * basicConfiguration.ONE_ELA())) {
+                    hasEnoughFee = true;
+                    break out;
+                }
+            }
+        }
+
+
+        if(!hasEnoughFee) {
+            throw new ApiRequestDataException(Errors.NOT_ENOUGH_UTXO.val());
+        }
+
+        List utxoInputsArray = new ArrayList<>();
+        txListMap.put("UTXOInputs", utxoInputsArray);
+        List privsArray = new ArrayList<>();
+        for(int z=0;z<=utxoIndex;z++){
+            List<Map> utxolm = utxoTotal.get(z);
+            String privateKey = prvKeys.get(z);
+            String addr = sdrAddrs.get(z);
+            int subIndex = utxolm.size() - 1;
+            if(z == utxoIndex){
+                subIndex = index;
+            }
+            for(int i=0;i<=subIndex;i++) {
+                Map<String,Object> utxoInputsDetail = new HashMap<>();
+                Map<String,Object> utxoM = utxolm.get(i);
+                Map<String,Object> privM = new HashMap<>();
+                utxoInputsDetail.put("txid",  utxoM.get("Txid"));
+                utxoInputsDetail.put("index",  utxoM.get("Index"));
+                utxoInputsDetail.put("address",  addr);
+                privM.put("privateKey",  privateKey);
+                utxoInputsArray.add(utxoInputsDetail);
+                privsArray.add(privM);
+            }
+        }
+        List utxoOutputsArray = new ArrayList<>();
+        txListMap.put("Outputs", utxoOutputsArray);
+        Map<String,Object> brokerOutputs = new HashMap<>();
+        if (type == ChainType.MAIN_DID_CROSS_CHAIN){
+            brokerOutputs.put("address", didConfiguration.getMainChainAddress());
+        }else if(type == ChainType.DID_MAIN_CROSS_CHAIN){
+            brokerOutputs.put("address", didConfiguration.getBurnAddress());
+        }else{
+            throw new ApiRequestDataException("no such transfer type");
+        }
+        brokerOutputs.put("amount", Math.round((smAmt+basicConfiguration.CROSS_CHAIN_FEE()) * basicConfiguration.ONE_ELA()));
+        utxoOutputsArray.add(brokerOutputs);
+
+        double leftMoney = (spendMoney - ((basicConfiguration.CROSS_CHAIN_FEE() * 2) + smAmt));
+        String changeAddr = sdrAddrs.get(0);
+        if(Math.round(leftMoney * basicConfiguration.ONE_ELA()) > Math.round(basicConfiguration.FEE() * basicConfiguration.ONE_ELA())) {
+            Map<String,Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail.put("address", changeAddr);
+            utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+            utxoOutputsArray.add(utxoOutputsDetail);
+        }
+
+        txListMap.put("PrivateKeySign",privsArray);
+        List crossOutputsArray = new ArrayList<>();
+        txListMap.put("CrossChainAsset",crossOutputsArray);
+        for(int i=0;i<addrs.size();i++) {
+            Map<String,Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail.put("address", addrs.get(i));
+            utxoOutputsDetail.put("amount", Math.round(amts.get(i) * basicConfiguration.ONE_ELA()));
+            crossOutputsArray.add(utxoOutputsDetail);
+        }
+
+        JSONObject par = new JSONObject();
+        par.accumulateAll(paraListMap);
+        logger.info("sending : " + par);
+        String rawTx = null ;
+        rawTx = SingleSignTransaction.genCrossChainRawTransaction(par);
+        logger.info("receiving : " + rawTx);
+        return rawTx;
     }
 
     /**
      * generate raw transaction.
      * @param smAmt the total spend money
-     * @param utxolm utxo
-     * @param privateKey sender private key
-     * @param addr sender public address
      * @param addrs receiver addresses
      * @param amts receiver output money
      * @param data memo data
@@ -469,7 +616,7 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
-    public String genTx(double smAmt , List<Map> utxolm , String privateKey , String addr ,List<String> addrs , List<Double> amts , String data) throws Exception {
+    public String genTx(double smAmt , List<List<Map>> utxoTotal , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data) throws Exception {
 
         if(addrs == null || addrs.size() == 0) {
             throw new RuntimeException("output can not be blank");
@@ -487,29 +634,44 @@ public class ElaService {
         int index = -1;
         double spendMoney = 0.0;
         boolean hasEnoughFee = false;
-        for( int i=0; i<utxolm.size(); i++) {
-            index = i;
-            spendMoney += Double.valueOf(utxolm.get(i).get("Value")+"");
-            if( Math.round(spendMoney * basicConfiguration.ONE_ELA()) >= Math.round((smAmt + basicConfiguration.FEE()) * basicConfiguration.ONE_ELA())) {
-                hasEnoughFee = true;
-                break;
+        int utxoIndex = -1;
+        out :for(int z= 0 ;z < utxoTotal.size();z++){
+            List<Map> utxolm = utxoTotal.get(z);
+            utxoIndex = z;
+            for( int i=0; i<utxolm.size(); i++) {
+                index = i;
+                spendMoney += Double.valueOf(utxolm.get(i).get("Value")+"");
+                if( Math.round(spendMoney * basicConfiguration.ONE_ELA()) >= Math.round((smAmt + basicConfiguration.FEE()) * basicConfiguration.ONE_ELA())) {
+                    hasEnoughFee = true;
+                    break out;
+                }
             }
         }
 
+
         if(!hasEnoughFee) {
-            return null;
+            throw new ApiRequestDataException(Errors.NOT_ENOUGH_UTXO.val());
         }
 
         List utxoInputsArray = new ArrayList<>();
         txListMap.put("UTXOInputs", utxoInputsArray);
-        for(int i=0;i<=index;i++) {
-            Map<String,Object> utxoInputsDetail = new HashMap<>();
-            Map<String,Object> utxoM = utxolm.get(i);
-            utxoInputsDetail.put("txid",  utxoM.get("Txid"));
-            utxoInputsDetail.put("index",  utxoM.get("Index"));
-            utxoInputsDetail.put("privateKey",  privateKey);
-            utxoInputsDetail.put("address",  addr);
-            utxoInputsArray.add(utxoInputsDetail);
+        for(int z=0;z<=utxoIndex;z++){
+            List<Map> utxolm = utxoTotal.get(z);
+            String privateKey = prvKeys.get(z);
+            String addr = sdrAddrs.get(z);
+            int subIndex = utxolm.size() - 1;
+            if(z == utxoIndex){
+                subIndex = index;
+            }
+            for(int i=0;i<=subIndex;i++) {
+                Map<String,Object> utxoInputsDetail = new HashMap<>();
+                Map<String,Object> utxoM = utxolm.get(i);
+                utxoInputsDetail.put("txid",  utxoM.get("Txid"));
+                utxoInputsDetail.put("index",  utxoM.get("Index"));
+                utxoInputsDetail.put("privateKey",  privateKey);
+                utxoInputsDetail.put("address",  addr);
+                utxoInputsArray.add(utxoInputsDetail);
+            }
         }
         List utxoOutputsArray = new ArrayList<>();
         txListMap.put("Outputs", utxoOutputsArray);
@@ -520,9 +682,10 @@ public class ElaService {
             utxoOutputsArray.add(utxoOutputsDetail);
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
+        String changeAddr = sdrAddrs.get(0);
         if(Math.round(leftMoney * basicConfiguration.ONE_ELA()) > Math.round(basicConfiguration.FEE() * basicConfiguration.ONE_ELA())) {
             Map<String,Object> utxoOutputsDetail = new HashMap<>();
-            utxoOutputsDetail.put("address", addr);
+            utxoOutputsDetail.put("address", changeAddr);
             utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
             utxoOutputsArray.add(utxoOutputsDetail);
         }
@@ -568,8 +731,13 @@ public class ElaService {
         String rawMemo = JSON.toJSONString(respMap.get("result"));
         logger.debug("rawMemo:{}",rawMemo);
         transferParamEntity.setMemo(rawMemo);
-        transferParamEntity.setSenderAddr(Ela.getAddressFromPrivate(privateKey));
-        transferParamEntity.setSenderPrivateKey(privateKey);
+        String addr = Ela.getAddressFromPrivate(privateKey);
+        List<Map> lstMap = new ArrayList<>();
+        Map sm = new HashMap();
+        sm.put("address",addr);
+        sm.put("privateKey",privateKey);
+        lstMap.add(sm);
+        transferParamEntity.setSender(lstMap);
         List<Map> receiverList = new ArrayList<>();
         Map receivMap = new HashMap();
         receivMap.put("address",recevAddr);
@@ -580,7 +748,6 @@ public class ElaService {
         return transfer(transferParamEntity);
     }
 
-    private final static String DID_NO_SUCH_INFO = "No such info";
     /**
      * get did info from memo
      * @param entity
@@ -590,7 +757,7 @@ public class ElaService {
     public String getDidInfo(DidInfoEntity entity) throws Exception{
         List<String> txidList = entity.getTxIds();
         if(txidList.size() == 0){
-            return JSON.toJSONString(new ReturnMsgEntity().setResult(DID_NO_SUCH_INFO).setStatus(retCodeConfiguration.SUCC()));
+            return JSON.toJSONString(new ReturnMsgEntity().setResult(Errors.DID_NO_SUCH_INFO.val()).setStatus(retCodeConfiguration.SUCC()));
         }
         String key = entity.getKey();
         //TODO deal with the same field
@@ -625,6 +792,29 @@ public class ElaService {
                 return JSON.toJSONString(new ReturnMsgEntity().setResult(v).setStatus(retCodeConfiguration.SUCC()));
             }
         }
-        return JSON.toJSONString(new ReturnMsgEntity().setResult(DID_NO_SUCH_INFO).setStatus(retCodeConfiguration.SUCC()));
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(Errors.DID_NO_SUCH_INFO.val()).setStatus(retCodeConfiguration.SUCC()));
     }
+
+    /**
+     * make mainchain to did chain asset transfer
+     * @param entity
+     * @return
+     * @throws Exception
+     */
+    public String main2DidCrossTransfer(TransferParamEntity entity) throws Exception{
+        entity.setType(ChainType.MAIN_DID_CROSS_CHAIN);
+        return transfer(entity);
+    }
+
+    /**
+     * make did to mainchain asset transfer
+     * @param entity
+     * @return
+     * @throws Exception
+     */
+    public String did2MainCrossTransfer(TransferParamEntity entity) throws Exception {
+        entity.setType(ChainType.DID_MAIN_CROSS_CHAIN);
+        return transfer(entity);
+    }
+
 }
