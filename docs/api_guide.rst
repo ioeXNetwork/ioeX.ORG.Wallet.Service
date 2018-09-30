@@ -550,7 +550,6 @@ using this api you can transfer money from mainchain to did sidechain.
                   "privateKey":"FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F"
               }
           ],
-          "memo":"测试",
           "receiver":[
               {
                   "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
@@ -591,7 +590,6 @@ using this api you can transfer money from did sidechain to main chain.
                   "privateKey":"C740869D015E674362B1F441E3EDBE1CBCF4FE8B709AA1A77E5CCA2C92BAF99D"
               }
           ],
-          "memo":"测试",
           "receiver":[
               {
                   "address":"EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv",
