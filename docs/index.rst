@@ -42,5 +42,6 @@ Contents
    
    config.rst
    api_guide.rst
+   Changlog.rst
 
 
