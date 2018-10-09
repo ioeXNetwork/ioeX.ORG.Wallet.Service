@@ -574,7 +574,7 @@ Sidechain to Mainchain transfer
 ------------------------------------------
 using this api you can transfer money from did sidechain to main chain.
 
-.. http:post:: /api/1/cross/dm2/transfer
+.. http:post:: /api/1/cross/d2m/transfer
    
    **Example Request**:
 

@@ -18,6 +18,7 @@ import org.elastos.entity.SignDataEntity;
 import org.elastos.service.ElaService;
 import org.elastos.util.HttpKit;
 import org.elastos.util.JsonUtil;
+import org.elastos.util.ela.ElaKit;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,4 +111,18 @@ public class TestElaService {
         double smAmt = 0.089698;
         System.out.println(Math.round((smAmt + (0.0001 * 2)) * 100000000));
     }
+
+    @Test
+    public void testWallets(){
+        String privKey = Ela.getPrivateKey();
+        String addresss = Ela.getAddressFromPrivate(privKey);
+        String did = Ela.getIdentityIDFromPrivate(privKey);
+        System.out.println(addresss + "  " + did);
+    }
+
+    @Test
+    public void testCheckAddr(){
+        System.out.println(ElaKit.checkAddress("EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv"));
+    }
+
 }

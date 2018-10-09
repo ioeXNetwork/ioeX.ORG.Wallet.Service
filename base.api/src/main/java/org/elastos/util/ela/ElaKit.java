@@ -54,4 +54,14 @@ public class ElaKit {
             return var12.toString();
         }
     }
+
+    /**
+     * check if address is valid.
+     * @param addr
+     * @return
+     */
+    public static boolean checkAddress(String addr) {
+        return Util.checkAddress(addr);
+    }
+
 }

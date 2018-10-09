@@ -179,6 +179,8 @@ public class ElaService {
      */
     public String getBalance(String address){
 
+        checkAddr(address);
+
         String result = HttpKit.get(nodeConfiguration.getUtxoByAddr(ChainType.MAIN_CHAIN)+ address);
 
         Map<String,Object>  resultMap = (Map<String,Object>) JSON.parse(result);
@@ -213,7 +215,19 @@ public class ElaService {
      */
     public String getUtxos(String address){
 
+        checkAddr(address);
+
         return reqChainData(nodeConfiguration.getUtxoByAddr(ChainType.MAIN_CHAIN)+ address);
+    }
+
+    /**
+     * check address
+     * @param address
+     */
+    private void checkAddr(String address){
+        if (!ElaKit.checkAddress(address)){
+            throw new ApiRequestDataException(Errors.ELA_ADDRESS_INVALID.val() + ":" + address);
+        }
     }
 
 
@@ -400,6 +414,7 @@ public class ElaService {
         List<String> rstlist = new ArrayList<>();
         for(int i=0;i<addrs.size();i++){
             String addr = addrs.get(i);
+            checkAddr(addr);
             String result = HttpKit.get(nodeConfiguration.getUtxoByAddr(type) + addr);
             rstlist.add(result);
         }

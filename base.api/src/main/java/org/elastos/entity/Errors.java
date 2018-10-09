@@ -15,7 +15,9 @@ public enum Errors {
 
     NOT_ENOUGH_UTXO("Not Enough UTXO"),
 
-    DID_NO_SUCH_INFO("No such info");
+    DID_NO_SUCH_INFO("No such info"),
+
+    ELA_ADDRESS_INVALID("address is not valid");
 
     private Errors(String str){
         this.str = str;
