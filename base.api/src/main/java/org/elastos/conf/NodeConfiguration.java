@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("node")
 public class NodeConfiguration {
     private String prefix              ;
-    private String didPrefix           ;
     private String connectionCount     ;
     private String state               ;
     private String blockTxByHeight     ;
@@ -44,107 +43,62 @@ public class NodeConfiguration {
     }
 
     public String getConnectionCount(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + connectionCount;
-        }
         return prefix + connectionCount;
     }
 
     public String getState(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + state;
-        }
         return prefix + state;
     }
 
     public String getBlockTxByHeight(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + blockTxByHeight;
-        }
         return prefix + blockTxByHeight;
     }
 
     public String getBlockByHeight(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + blockByHeight;
-        }
         return prefix + blockByHeight;
     }
 
     public String getBlockByhash(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + blockByhash;
-        }
         return prefix + blockByhash;
     }
 
     public String getBlockHeight(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + blockHeight;
-        }
         return prefix + blockHeight;
     }
 
     public String getBlockHash(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + blockHash;
-        }
         return prefix + blockHash;
     }
 
     public String getTransaction(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN ){
-            return didPrefix + transaction;
-        }
         return prefix + transaction;
     }
 
     public String getAsset(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + asset;
-        }
         return prefix + asset;
     }
 
     public String getBalanceByAddr(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + balanceByAddr;
-        }
         return prefix + balanceByAddr;
     }
 
     public String getBalanceByAsset(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN ){
-            return didPrefix + balanceByAsset;
-        }
         return prefix + balanceByAsset;
     }
 
     public String getUtxoByAsset(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN){
-            return didPrefix + utxoByAsset;
-        }
         return prefix + utxoByAsset;
     }
 
     public String getUtxoByAddr(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN){
-            return didPrefix + utxoByAddr;
-        }
         return prefix + utxoByAddr;
     }
 
     public String sendRawTransaction(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN || type == ChainType.DID_MAIN_CROSS_CHAIN){
-            return didPrefix + sendRawTransaction;
-        }
         return prefix + sendRawTransaction;
     }
 
     public String getTransactionPool(ChainType type) {
-        if(type == ChainType.DID_SIDECHAIN){
-            return didPrefix + transactionPool;
-        }
         return prefix + transactionPool;
     }
     public void setPrefix(String prefix) {
@@ -210,13 +164,4 @@ public class NodeConfiguration {
     public void setTransactionPool(String transactionPool) {
         this.transactionPool = transactionPool;
     }
-
-    public String getDidPrefix() {
-        return didPrefix;
-    }
-
-    public void setDidPrefix(String didPrefix) {
-        this.didPrefix = didPrefix;
-    }
-
 }

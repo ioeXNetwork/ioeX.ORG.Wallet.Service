@@ -467,18 +467,6 @@ public class ElaService {
         return sendTx(rawTx,type);
     }
 
-
-    /**
-     * did asset transfer
-     * @param entity
-     * @return
-     * @throws Exception
-     */
-    public String didTransfer(TransferParamEntity entity) throws Exception{
-        entity.setType(ChainType.DID_SIDECHAIN);
-        return transfer(entity);
-    }
-
     /**
      * send a transaction to blockchain.
      * @param smAmt
@@ -722,95 +710,6 @@ public class ElaService {
     }
 
     /**
-     * set did info into memo
-     * @param info
-     * @return
-     * @throws Exception
-     */
-    public String setDidInfo(DidInfoEntity info) throws Exception{
-        String data = null;
-        try {
-            data = JSON.toJSONString(info.getInfo());
-        }catch (Exception ex){
-            throw new ApiRequestDataException("DID info must be a json object");
-        }
-        String privateKey = info.getPrivateKey();
-        String recevAddr = didConfiguration.getAddress();
-        String fee = didConfiguration.getFee();
-        TransferParamEntity transferParamEntity = new TransferParamEntity();
-        SignDataEntity signDataEntity = new SignDataEntity();
-        signDataEntity.setPrivateKey(privateKey);
-        signDataEntity.setMsg(data);
-        String response = sign(signDataEntity);
-        Map respMap = (Map)JSON.parse(response);
-        String rawMemo = JSON.toJSONString(respMap.get("result"));
-        logger.debug("rawMemo:{}",rawMemo);
-        transferParamEntity.setMemo(rawMemo);
-        String addr = Ela.getAddressFromPrivate(privateKey);
-        List<Map> lstMap = new ArrayList<>();
-        Map sm = new HashMap();
-        sm.put("address",addr);
-        sm.put("privateKey",privateKey);
-        lstMap.add(sm);
-        transferParamEntity.setSender(lstMap);
-        List<Map> receiverList = new ArrayList<>();
-        Map receivMap = new HashMap();
-        receivMap.put("address",recevAddr);
-        receivMap.put("amount",fee);
-        receiverList.add(receivMap);
-        transferParamEntity.setReceiver(receiverList);
-        transferParamEntity.setType(ChainType.DID_SIDECHAIN);
-        return transfer(transferParamEntity);
-    }
-
-    /**
-     * get did info from memo
-     * @param entity
-     * @return
-     * @throws Exception
-     */
-    public String getDidInfo(DidInfoEntity entity) throws Exception{
-        List<String> txidList = entity.getTxIds();
-        if(txidList.size() == 0){
-            return JSON.toJSONString(new ReturnMsgEntity().setResult(Errors.DID_NO_SUCH_INFO.val()).setStatus(retCodeConfiguration.SUCC()));
-        }
-        String key = entity.getKey();
-        //TODO deal with the same field
-        for(int i=0;i<txidList.size();i++){
-            String txid = txidList.get(i);
-            String txinfo = getTransactionByHash(txid,ChainType.DID_SIDECHAIN);
-            Map txinfoMap = (Map)JSON.parse(txinfo);
-            Object orst = txinfoMap.get("result");
-            if ((orst instanceof Map) == false){
-                continue;
-            }
-            Map resultMap = (Map)orst;
-            List<Map> attrList = (List)resultMap.get("attributes");
-            String hexData = (String)attrList.get(0).get("data");
-            Map rawMap = (Map)JSON.parse(new String(DatatypeConverter.parseHexBinary(hexData)));
-            SignDataEntity signDataEntity = new SignDataEntity();
-            String hexMsg = (String)rawMap.get("msg");
-            signDataEntity.setMsg(hexMsg);
-            signDataEntity.setSig((String)rawMap.get("sig"));
-            signDataEntity.setPub((String)rawMap.get("pub"));
-            String verifyResp = verify(signDataEntity);
-            Map verifyMap = (Map)JSON.parse(verifyResp);
-            Boolean verified = (Boolean)verifyMap.get("result");
-            if (!verified){
-                continue;
-            }else{
-                Map rawMsgMap = (Map)JSON.parse(new String(DatatypeConverter.parseHexBinary(hexMsg)));
-                Object v = rawMsgMap.get(key);
-                if (v == null){
-                    continue;
-                }
-                return JSON.toJSONString(new ReturnMsgEntity().setResult(v).setStatus(retCodeConfiguration.SUCC()));
-            }
-        }
-        return JSON.toJSONString(new ReturnMsgEntity().setResult(Errors.DID_NO_SUCH_INFO.val()).setStatus(retCodeConfiguration.SUCC()));
-    }
-
-    /**
      * make mainchain to did chain asset transfer
      * @param entity
      * @return
@@ -818,17 +717,6 @@ public class ElaService {
      */
     public String main2DidCrossTransfer(TransferParamEntity entity) throws Exception{
         entity.setType(ChainType.MAIN_DID_CROSS_CHAIN);
-        return transfer(entity);
-    }
-
-    /**
-     * make did to mainchain asset transfer
-     * @param entity
-     * @return
-     * @throws Exception
-     */
-    public String did2MainCrossTransfer(TransferParamEntity entity) throws Exception {
-        entity.setType(ChainType.DID_MAIN_CROSS_CHAIN);
         return transfer(entity);
     }
 
