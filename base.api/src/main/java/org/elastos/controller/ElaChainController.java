@@ -37,6 +37,14 @@ public class ElaChainController extends BaseController{
         return call(null,null,"getCurrentHeight",service);
     }
 
+
+    @RequestMapping(value = "/tx/{txid}",method = RequestMethod.GET)
+    @ResponseBody
+    public String getTxByTxId(@PathVariable("txid") String txid){
+
+        return call(txid,String.class,"getTxByTxId",service);
+    }
+
     @RequestMapping(value = "/txs/{height}",method = RequestMethod.GET)
     @ResponseBody
     public String getBlockTxsByHeight(@PathVariable("height") String height){
