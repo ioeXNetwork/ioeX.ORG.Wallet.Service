@@ -13,6 +13,8 @@ import org.elastos.elaweb.ElaController;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,5 +79,12 @@ public class TestHdwallet {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Test
+    public void TestMnemonic(){
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("english");
+        System.out.println(is);
+
     }
 }

@@ -7,6 +7,7 @@
 package org.elastos.controller;
 
 import org.elastos.entity.DidInfoEntity;
+import org.elastos.entity.HdWalletEntity;
 import org.elastos.entity.SignDataEntity;
 import org.elastos.entity.TransferParamEntity;
 import org.elastos.service.ElaService;
@@ -28,6 +29,18 @@ public class ElaChainController extends BaseController{
     @ResponseBody
     public String createWallet(){
         return call(null,null,"createWallet",service);
+    }
+
+    @RequestMapping(value = "/mnemonic",method = RequestMethod.GET)
+    @ResponseBody
+    public String mnemonic(){
+        return call(null,null,"mnemonic",service);
+    }
+
+    @RequestMapping(value = "/hd",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String genHdWallet(@RequestBody String reqBody){
+        return call(reqBody,HdWalletEntity.class,"genHdWallet",service);
     }
 
     @RequestMapping(value = "/currHeight",method = RequestMethod.GET)
