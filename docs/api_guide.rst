@@ -290,6 +290,52 @@ check out a transaction
     :statuscode 10001: process error
 
 
+get utxos of specific address
+-----------------------------------------
+check out a transaction
+
+.. http:get:: /api/1/utxos/(string:`address`)
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /api/1/utxos/EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv HTTP/1.1
+      Host: localhost
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+        "result":[
+            {
+                "AssetId":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                "AssetName":"ELA",
+                "Utxo":[
+                    {
+                        "Txid":"4213d73e3764750cbab09593db213ac1ea222947d91e6e6d2c243d2461bd034c",
+                        "Value":"0.00010000",
+                        "Index":0
+                    }
+                ]
+            }
+        ],
+        "status":200
+    }
+
+
+
+    :statuscode 200:   no error
+    :statuscode 400:   bad request
+    :statuscode 404:   not found request
+    :statuscode 500:   internal error
+    :statuscode 10001: process error
+
+
 Check the current network block height
 -----------------------------------------
 tells you the current block height of the network 
