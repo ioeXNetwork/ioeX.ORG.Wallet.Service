@@ -217,69 +217,69 @@ check out a transaction
       HTTP/1.1 200 OK
       Content-Type: application/json
 
-      {
-        "result":{
-            "vsize":346,
-            "locktime":0,
-            "txid":"62637968e72b06e4fa1de91542a3b71bd2462ba1d29e9c14c2ecfd042d1937ab",
-            "confirmations":6756,
-            "type":8,
-            "version":0,
-            "vout":[
-                {
-                    "outputlock":0,
-                    "address":"XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU",
-                    "assetid":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
-                    "value":"0.10010000",
-                    "n":0
-                },
-                {
-                    "outputlock":0,
-                    "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
-                    "assetid":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
-                    "value":"0.50249300",
-                    "n":1
-                }
-            ],
-            "blockhash":"4021e5c0ace86221016d3aa2b114adbd84bb03692bb6ddc6034794260834c570",
-            "size":346,
-            "blocktime":1538279155,
-            "payload":{
-                "CrossChainAddresses":[
-                    "EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv"
-                ],
-                "OutputIndexes":[
-                    0
-                ],
-                "CrossChainAmounts":[
-                    10000000
-                ]
-            },
-            "vin":[
-                {
-                    "sequence":0,
-                    "txid":"ba7bd41aae0a1371d9689ad04508f0754bb4a5333386411bccbdec718ce61625",
-                    "vout":1
-                }
-            ],
-            "payloadversion":0,
-            "attributes":[
-                {
-                    "data":"32323432343239353130383035363838303230",
-                    "usage":0
-                }
-            ],
-            "time":1538279155,
-            "programs":[
-                {
-                    "code":"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac",
-                    "parameter":"40cf6b8a18c861fcad1c23816221cc40a0d2e7d43065c070e66905ff7d6c634068542dd2a9b0bbb24de6a5a547b57767f908fc384cd6dc06298de11ebc3338aa79"
-                }
-            ],
-            "hash":"62637968e72b06e4fa1de91542a3b71bd2462ba1d29e9c14c2ecfd042d1937ab"
-        },
-        "status":200
-    }
+        {
+          "result":{
+              "vsize":346,
+              "locktime":0,
+              "txid":"62637968e72b06e4fa1de91542a3b71bd2462ba1d29e9c14c2ecfd042d1937ab",
+              "confirmations":6756,
+              "type":8,
+              "version":0,
+              "vout":[
+                  {
+                      "outputlock":0,
+                      "address":"XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU",
+                      "assetid":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                      "value":"0.10010000",
+                      "n":0
+                  },
+                  {
+                      "outputlock":0,
+                      "address":"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                      "assetid":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                      "value":"0.50249300",
+                      "n":1
+                  }
+              ],
+              "blockhash":"4021e5c0ace86221016d3aa2b114adbd84bb03692bb6ddc6034794260834c570",
+              "size":346,
+              "blocktime":1538279155,
+              "payload":{
+                  "CrossChainAddresses":[
+                      "EHLhCEbwViWBPwh1VhpECzYEA7jQHZ4zLv"
+                  ],
+                  "OutputIndexes":[
+                      0
+                  ],
+                  "CrossChainAmounts":[
+                      10000000
+                  ]
+              },
+              "vin":[
+                  {
+                      "sequence":0,
+                      "txid":"ba7bd41aae0a1371d9689ad04508f0754bb4a5333386411bccbdec718ce61625",
+                      "vout":1
+                  }
+              ],
+              "payloadversion":0,
+              "attributes":[
+                  {
+                      "data":"32323432343239353130383035363838303230",
+                      "usage":0
+                  }
+              ],
+              "time":1538279155,
+              "programs":[
+                  {
+                      "code":"21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac",
+                      "parameter":"40cf6b8a18c861fcad1c23816221cc40a0d2e7d43065c070e66905ff7d6c634068542dd2a9b0bbb24de6a5a547b57767f908fc384cd6dc06298de11ebc3338aa79"
+                  }
+              ],
+              "hash":"62637968e72b06e4fa1de91542a3b71bd2462ba1d29e9c14c2ecfd042d1937ab"
+          },
+          "status":200
+      }
 
 
 
@@ -289,6 +289,138 @@ check out a transaction
     :statuscode 500:   internal error
     :statuscode 10001: process error
 
+get transactions 
+-----------------------------------------
+get a list of transactions
+
+.. http:post:: /api/1/tx
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/tx HTTP/1.1
+    Host: localhost:8090
+    Content-Type: application/json
+
+      [
+          "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8",
+          "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c9",
+          "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8"
+      ]
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Vary: Accept
+      Content-Type: application/json
+
+      {
+        "result": [
+            {
+                "vsize": 288,
+                "locktime": 0,
+                "txid": "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8",
+                "confirmations": 13,
+                "type": 2,
+                "version": 0,
+                "vout": [
+                    {
+                        "outputlock": 0,
+                        "address": "8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG",
+                        "assetid": "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                        "value": "1",
+                        "n": 0
+                    },
+                    {
+                        "outputlock": 0,
+                        "address": "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                        "assetid": "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                        "value": "977.89999500",
+                        "n": 1
+                    }
+                ],
+                "blockhash": "75d78222e8f8b7622ab45902fd7a79c03edf08bceb1078335e9a8caf90cee612",
+                "size": 288,
+                "blocktime": 1539919032,
+                "vin": [
+                    {
+                        "sequence": 0,
+                        "txid": "f176d04e5980828770acadcfc3e2d471885ab7358cd7d03f4f61a9cd0c593d54",
+                        "vout": 1
+                    }
+                ],
+                "payloadversion": 0,
+                "attributes": [
+                    {
+                        "data": "e6b58be8af95",
+                        "usage": 129
+                    }
+                ],
+                "time": 1539919032,
+                "programs": [
+                    {
+                        "code": "21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac",
+                        "parameter": "403792fa7dd7f29a810ab247e6476ca814ae51c550419f101948db6141004b364b645d84aaecdcb96790bd8cd7606dde04c7ca494ed51b893f460d06517778e8c1"
+                    }
+                ],
+                "hash": "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8"
+            },
+            "Unknown Transaction",
+            {
+                "vsize": 288,
+                "locktime": 0,
+                "txid": "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8",
+                "confirmations": 13,
+                "type": 2,
+                "version": 0,
+                "vout": [
+                    {
+                        "outputlock": 0,
+                        "address": "8NJ7dbKsG2NRiBqdhY6LyKMiWp166cFBiG",
+                        "assetid": "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                        "value": "1",
+                        "n": 0
+                    },
+                    {
+                        "outputlock": 0,
+                        "address": "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
+                        "assetid": "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                        "value": "977.89999500",
+                        "n": 1
+                    }
+                ],
+                "blockhash": "75d78222e8f8b7622ab45902fd7a79c03edf08bceb1078335e9a8caf90cee612",
+                "size": 288,
+                "blocktime": 1539919032,
+                "vin": [
+                    {
+                        "sequence": 0,
+                        "txid": "f176d04e5980828770acadcfc3e2d471885ab7358cd7d03f4f61a9cd0c593d54",
+                        "vout": 1
+                    }
+                ],
+                "payloadversion": 0,
+                "attributes": [
+                    {
+                        "data": "e6b58be8af95",
+                        "usage": 129
+                    }
+                ],
+                "time": 1539919032,
+                "programs": [
+                    {
+                        "code": "21021421976fdbe518ca4e8b91a37f1831ee31e7b4ba62a32dfe2f6562efd57806adac",
+                        "parameter": "403792fa7dd7f29a810ab247e6476ca814ae51c550419f101948db6141004b364b645d84aaecdcb96790bd8cd7606dde04c7ca494ed51b893f460d06517778e8c1"
+                    }
+                ],
+                "hash": "64955791d225fddae4bba01547712c53f97ce3fb38252c01dbb9d6d9b7b982c8"
+            }
+        ],
+        "status": 200
+    }
 
 get utxos of specific address
 -----------------------------------------
@@ -311,21 +443,21 @@ check out a transaction
       Content-Type: application/json
 
       {
-        "result":[
-            {
-                "AssetId":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
-                "AssetName":"ELA",
-                "Utxo":[
-                    {
-                        "Txid":"4213d73e3764750cbab09593db213ac1ea222947d91e6e6d2c243d2461bd034c",
-                        "Value":"0.00010000",
-                        "Index":0
-                    }
-                ]
-            }
-        ],
-        "status":200
-    }
+          "result":[
+              {
+                  "AssetId":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                  "AssetName":"ELA",
+                  "Utxo":[
+                      {
+                          "Txid":"4213d73e3764750cbab09593db213ac1ea222947d91e6e6d2c243d2461bd034c",
+                          "Value":"0.00010000",
+                          "Index":0
+                      }
+                  ]
+              }
+          ],
+          "status":200
+      }
 
 
 

@@ -14,6 +14,8 @@ import org.elastos.service.ElaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * clark
  * <p>
@@ -56,6 +58,13 @@ public class ElaChainController extends BaseController{
     public String getTxByTxId(@PathVariable("txid") String txid){
 
         return call(txid,String.class,"getTxByTxId",service);
+    }
+
+    @RequestMapping(value = "/tx",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String getTxsByTxIds(@RequestBody String reqBody){
+
+        return call(reqBody,List.class,"getTxsByTxIds",service);
     }
 
     @RequestMapping(value = "/txs/{height}",method = RequestMethod.GET)

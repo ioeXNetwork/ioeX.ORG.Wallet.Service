@@ -124,6 +124,17 @@ public class ElaService {
         return JSON.toJSONString(new ReturnMsgEntity().setResult(msg.getResult()).setStatus(status));
     }
 
+    public String getTxsByTxIds(List<String> strList){
+        List<Object> results = new ArrayList<>();
+        for(int i=0;i<strList.size();i++){
+            String txid = strList.get(i);
+            String result = HttpKit.get(nodeConfiguration.sendRawTransaction(ChainType.MAIN_CHAIN)+ "/" + txid);
+            Map<String,Object>  resultMap = (Map<String,Object>) JSON.parse(result);
+            results.add(resultMap.get("Result"));
+        }
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(results).setStatus(retCodeConfiguration.SUCC()));
+    }
+
     /**
      * genHdTx info
      * @param hdTxEntity info entity
