@@ -9,6 +9,8 @@ package org.elastos.controller;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.service.ElaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,9 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 public class ElaOfflineController extends BaseController{
+
+    private Logger logger = LoggerFactory.getLogger(ElaOfflineController.class);
+
     @Autowired
     private ElaService elaService;
 
@@ -72,8 +77,7 @@ public class ElaOfflineController extends BaseController{
      */
     @RequestMapping(value = "/createTx",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String genTxData(@RequestBody String reqBody ){
-
+    public String genTxData(@RequestAttribute String reqBody ){
         return call(reqBody,HdTxEntity.class,"genHdTx",elaService);
     }
 
@@ -86,7 +90,7 @@ public class ElaOfflineController extends BaseController{
      */
     @RequestMapping(value = "/sendRawTx",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String sendRawTx(@RequestBody String reqBody){
+    public String sendRawTx(@RequestAttribute String reqBody){
 
        return call(reqBody,RawTxEntity.class,"sendRawTx",elaService);
     }

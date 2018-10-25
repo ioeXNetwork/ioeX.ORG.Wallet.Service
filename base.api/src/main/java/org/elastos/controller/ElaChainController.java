@@ -41,7 +41,7 @@ public class ElaChainController extends BaseController{
 
     @RequestMapping(value = "/hd",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String genHdWallet(@RequestBody String reqBody){
+    public String genHdWallet(@RequestAttribute String reqBody){
         return call(reqBody,HdWalletEntity.class,"genHdWallet",service);
     }
 
@@ -62,7 +62,7 @@ public class ElaChainController extends BaseController{
 
     @RequestMapping(value = "/tx",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String getTxsByTxIds(@RequestBody String reqBody){
+    public String getTxsByTxIds(@RequestAttribute String reqBody){
 
         return call(reqBody,List.class,"getTxsByTxIds",service);
     }
@@ -111,28 +111,28 @@ public class ElaChainController extends BaseController{
 
     @RequestMapping(value = "/sign",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String sign(@RequestBody String reqBody){
+    public String sign(@RequestAttribute String reqBody){
 
         return call(reqBody,SignDataEntity.class,"sign",service);
     }
 
     @RequestMapping(value = "/verify",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String verify(@RequestBody String reqBody){
+    public String verify(@RequestAttribute String reqBody){
 
         return call(reqBody,SignDataEntity.class,"verify",service);
     }
 
     @RequestMapping(value = "/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String transfer(@RequestBody String reqBody){
+    public String transfer(@RequestAttribute String reqBody){
 
         return call(reqBody,TransferParamEntity.class,"transfer",service);
     }
 
     @RequestMapping(value = "/cross/m2d/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public String m2dTransfer(@RequestBody String reqBody){
+    public String m2dTransfer(@RequestAttribute String reqBody){
 
         return call(reqBody,TransferParamEntity.class,"main2DidCrossTransfer",service);
     }

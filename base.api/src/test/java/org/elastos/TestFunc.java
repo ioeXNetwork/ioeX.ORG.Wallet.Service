@@ -14,9 +14,8 @@ package org.elastos;
 public class TestFunc {
     @org.junit.Test
     public void testByteReverse(){
-        long a = 10000l;
-        long b = Long.reverseBytes(a);
-        long c = Long.reverseBytes(b);
-        System.out.println(a + "  " + b + " " + c);
+        long b = Long.reverseBytes(9899999900l);
+        System.out.println( "  " + b + " " );
     }
+
 }

@@ -151,7 +151,8 @@ public class ElaService {
 
             List<String> utxoStr = getUtxoByAddr(inputAddrs[i],ChainType.MAIN_CHAIN);
 
-            List<Map> utxo = stripUtxo(utxoStr.get(0));
+//            List<Map> utxo = stripUtxo(utxoStr.get(0));
+            List<Map> utxo = stripUtxo(utxoStr.get(i));
 
             if(utxo != null){
                 utxoList.add(utxo);
@@ -425,12 +426,10 @@ public class ElaService {
             utxoOutputsArray.add(utxoOutputsDetail);
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
-        if (Math.round(leftMoney * basicConfiguration.ONE_ELA()) > Math.round(basicConfiguration.FEE() * basicConfiguration.ONE_ELA())) {
-            Map<String, Object> utxoOutputsDetail = new HashMap<>();
-            utxoOutputsDetail.put("address", hdTxEntity.getInputs()[0]);
-            utxoOutputsDetail.put("amount", Math.round(leftMoney * basicConfiguration.ONE_ELA()));
-            utxoOutputsArray.add(utxoOutputsDetail);
-        }
+        Map<String, Object> utxoOutputsDetail = new HashMap<>();
+        utxoOutputsDetail.put("address", hdTxEntity.getInputs()[0]);
+        utxoOutputsDetail.put("amount", Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+        utxoOutputsArray.add(utxoOutputsDetail);
 
         txListMap.put("Fee",basicConfiguration.FEE() * basicConfiguration.ONE_ELA());
         return paraListMap;
@@ -632,18 +631,16 @@ public class ElaService {
 
         double leftMoney = (spendMoney - ((basicConfiguration.CROSS_CHAIN_FEE() * 2) + smAmt));
         String changeAddr = sdrAddrs.get(0);
-        if(Math.round(leftMoney * basicConfiguration.ONE_ELA()) > Math.round(basicConfiguration.FEE() * basicConfiguration.ONE_ELA())) {
-            Map<String,Object> utxoOutputsDetail = new HashMap<>();
-            utxoOutputsDetail.put("address", changeAddr);
-            utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
-            utxoOutputsArray.add(utxoOutputsDetail);
-        }
+        Map<String,Object> utxoOutputsDetail = new HashMap<>();
+        utxoOutputsDetail.put("address", changeAddr);
+        utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+        utxoOutputsArray.add(utxoOutputsDetail);
 
         txListMap.put("PrivateKeySign",privsArray);
         List crossOutputsArray = new ArrayList<>();
         txListMap.put("CrossChainAsset",crossOutputsArray);
         for(int i=0;i<addrs.size();i++) {
-            Map<String,Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail = new HashMap<>();
             utxoOutputsDetail.put("address", addrs.get(i));
             utxoOutputsDetail.put("amount", Math.round(amts.get(i) * basicConfiguration.ONE_ELA()));
             crossOutputsArray.add(utxoOutputsDetail);
@@ -735,12 +732,10 @@ public class ElaService {
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
         String changeAddr = sdrAddrs.get(0);
-        if(Math.round(leftMoney * basicConfiguration.ONE_ELA()) > Math.round(basicConfiguration.FEE() * basicConfiguration.ONE_ELA())) {
-            Map<String,Object> utxoOutputsDetail = new HashMap<>();
-            utxoOutputsDetail.put("address", changeAddr);
-            utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
-            utxoOutputsArray.add(utxoOutputsDetail);
-        }
+        Map<String,Object> utxoOutputsDetail = new HashMap<>();
+        utxoOutputsDetail.put("address", changeAddr);
+        utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+        utxoOutputsArray.add(utxoOutputsDetail);
         JSONObject par = new JSONObject();
         par.accumulateAll(paraListMap);
         logger.info("sending : " + par);
