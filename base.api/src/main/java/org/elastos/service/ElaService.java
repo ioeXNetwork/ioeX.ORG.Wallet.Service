@@ -151,8 +151,7 @@ public class ElaService {
 
             List<String> utxoStr = getUtxoByAddr(inputAddrs[i],ChainType.MAIN_CHAIN);
 
-//            List<Map> utxo = stripUtxo(utxoStr.get(0));
-            List<Map> utxo = stripUtxo(utxoStr.get(i));
+            List<Map> utxo = stripUtxo(utxoStr.get(0));
 
             if(utxo != null){
                 utxoList.add(utxo);
