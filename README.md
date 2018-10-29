@@ -14,14 +14,14 @@ Run with `Maven`：
 <dependency>
     <groupId>org.elastos</groupId>
     <artifactId>base.api</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
 or `Gradle`:
 
 ```sh
-compile 'org.elastos:base.api:0.0.2'
+compile 'org.elastos:base.api:0.0.5'
 ```
 
 Add A Entry Class
