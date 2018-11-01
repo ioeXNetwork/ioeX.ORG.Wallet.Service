@@ -14,14 +14,14 @@ Run with `Maven`：
 <dependency>
     <groupId>org.elastos</groupId>
     <artifactId>base.api</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
 </dependency>
 ```
 
 or `Gradle`:
 
 ```sh
-compile 'org.elastos:base.api:0.0.5'
+compile 'org.elastos:base.api:0.0.6'
 ```
 
 Add A Entry Class
@@ -85,6 +85,6 @@ eth.infuraToken          =1bbe5789437548f190f73cfa72fd6a57
 eth.infuraEnable         =true
 
 ## DID related api
-did.mainChainAddress     =XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU
+did.mainChainAddress     =XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ
 did.burnAddress          =0000000000000000000000000000000000
 ```
