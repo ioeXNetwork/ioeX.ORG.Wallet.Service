@@ -22,10 +22,13 @@ import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.DefaultBlockParameterNumber;
+import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
+import rx.Observable;
 
 import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
@@ -94,7 +97,7 @@ public class TestEthService {
     @Ignore
     public void testSendETHV2(){
         try{
-            BigInteger value = Convert.toWei("0.019", Convert.Unit.ETHER).toBigInteger();
+            BigInteger value = Convert.toWei("0.5", Convert.Unit.ETHER).toBigInteger();
             TransactionReceipt receipt = ethService.sendTx("0x6fb496dc489e7cbfd3e745c9e4ea281897e69ee0",value,credentials);
             System.out.println(receipt);
         }catch (Exception ex){
@@ -321,7 +324,10 @@ public class TestEthService {
     public void testLoadSmartContractELA() throws Exception{
 
         Ela ela = Ela.load("0xf3a35e9d4e21bead3f4ec523abab385699d879a4",web3j,credentials,gasPrice,gasLimit);
-
+        EthFilter filter = new EthFilter(new DefaultBlockParameterNumber(10),
+                new DefaultBlockParameterNumber(100),"0x6fb496dc489e7cbfd3e745c9e4ea281897e69ee0");
+        Observable<Ela.TransferEventResponse> observable = ela.transferEventObservable(filter);
+        observable.take(0);
         BigInteger amt = new BigInteger("1000000000000000000");
 
         TransactionReceipt tr = ela.transfer("0x6fb496dc489e7cbfd3e745c9e4ea281897e69ee0",amt).sendAsync().get();
