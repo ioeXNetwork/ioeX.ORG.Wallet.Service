@@ -33,10 +33,16 @@ public class ElaChainController extends BaseController{
         return call(null,null,"createWallet",service);
     }
 
-    @RequestMapping(value = "/mnemonic",method = RequestMethod.GET)
+    @RequestMapping(value = "/cn/mnemonic",method = RequestMethod.GET)
     @ResponseBody
-    public String mnemonic(){
-        return call(null,null,"mnemonic",service);
+    public String mnemonicCn(){
+        return call("chinese",String.class,"mnemonic",service);
+    }
+
+    @RequestMapping(value = "/eng/mnemonic",method = RequestMethod.GET)
+    @ResponseBody
+    public String mnemonicEng(){
+        return call("english",String.class,"mnemonic",service);
     }
 
     @RequestMapping(value = "/hd",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
@@ -137,4 +143,10 @@ public class ElaChainController extends BaseController{
         return call(reqBody,TransferParamEntity.class,"main2DidCrossTransfer",service);
     }
 
+    @RequestMapping(value = "/nodeNotify",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String nodeNotify(@RequestAttribute String reqBody){
+
+        return "{\"SUCC\":200}";
+    }
 }

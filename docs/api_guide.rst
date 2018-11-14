@@ -585,13 +585,13 @@ generate mnemonic phrases
 -----------------------------------------
 please copy your mnemonic to somewhere safe
 
-.. http:get:: /api/1/mnemonic
+.. http:get:: /api/1/eng/mnemonic
 
    **Example request**:
 
    .. sourcecode:: http
 
-      GET /api/1/mnemonic HTTP/1.1
+      GET /api/1/eng/mnemonic HTTP/1.1
       Host: localhost
 
    **Example response**:
@@ -603,6 +603,33 @@ please copy your mnemonic to somewhere safe
 
       {
           "result":"obtain pill nest sample caution stone candy habit silk husband give net",
+          "status":200
+      }
+
+   :statuscode 200:   no error
+   :statuscode 400:   bad request
+   :statuscode 404:   not found request
+   :statuscode 500:   internal error
+   :statuscode 10001: process error
+
+.. http:get:: /api/1/cn/mnemonic
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /api/1/cn/mnemonic HTTP/1.1
+      Host: localhost
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result":"命 氨 静 粘 汤 介 璃 沟 腰 贸 里 莱",
           "status":200
       }
 
