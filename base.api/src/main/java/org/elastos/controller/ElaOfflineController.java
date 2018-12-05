@@ -6,6 +6,7 @@
  */
 package org.elastos.controller;
 
+import com.alibaba.fastjson.JSON;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.service.ElaService;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -91,8 +94,7 @@ public class ElaOfflineController extends BaseController{
     @RequestMapping(value = "/sendRawTx",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     public String sendRawTx(@RequestAttribute String reqBody){
-
-       return call(reqBody,RawTxEntity.class,"sendRawTx",elaService);
+        return call(reqBody, RawTxEntity.class,"sendRawTx",elaService);
     }
 
     /**

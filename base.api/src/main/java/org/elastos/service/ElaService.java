@@ -6,8 +6,7 @@
  */
 package org.elastos.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -20,10 +19,8 @@ import org.elastos.conf.BasicConfiguration;
 import org.elastos.conf.DidConfiguration;
 import org.elastos.conf.NodeConfiguration;
 import org.elastos.conf.RetCodeConfiguration;
-import org.elastos.ela.ECKey;
-import org.elastos.ela.Ela;
-import org.elastos.ela.SignTool;
-import org.elastos.ela.Util;
+import org.elastos.dao.SendRawTxStatisticRepository;
+import org.elastos.ela.*;
 import org.elastos.elaweb.ElaController;
 import org.elastos.entity.*;
 import org.elastos.exception.ApiInternalException;
@@ -37,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -120,6 +118,9 @@ public class ElaService {
             status = retCodeConfiguration.SUCC();
         }else{
             status = retCodeConfiguration.PROCESS_ERROR();
+        }
+        if(rawTxEntity.getUserAgent() != null && msg.getError() == 0 ){
+            addStatistics(rawTxEntity.getData(),rawTxEntity.getUserAgent());
         }
         return JSON.toJSONString(new ReturnMsgEntity().setResult(msg.getResult()).setStatus(status));
     }
@@ -888,6 +889,28 @@ public class ElaService {
     public String main2DidCrossTransfer(TransferParamEntity entity) throws Exception{
         entity.setType(ChainType.MAIN_DID_CROSS_CHAIN);
         return transfer(entity);
+    }
+
+    @Autowired
+    private SendRawTxStatisticRepository sendRawTxStatisticRepository;
+
+    public void addStatistics(String rawData,String userAgent){
+        try{
+            Map rawMap = Tx.DeSerialize(new DataInputStream(new ByteArrayInputStream(DatatypeConverter.parseHexBinary(rawData))));
+            Map input = ((List<Map>)rawMap.get("UTXOInputs")).get(0);
+            String txid =input.get("Txid")+"";
+            Short vout = (Short)input.get("Vout");
+            String ret = HttpKit.get(nodeConfiguration.getTransaction(null)+txid);
+            String address = ((List<Map>)((Map)((Map)JSON.parse(ret)).get("Result")).get("vout")).get(vout).get("address")+"";
+            String raw = JSON.toJSONString(rawMap);
+            SendRawTxStatistic statistic = new SendRawTxStatistic();
+            statistic.setAddress(address);statistic.setRaw(raw);statistic.setUserAgent(userAgent);
+            sendRawTxStatisticRepository.save(statistic);
+            logger.debug("saving statistics");
+        }catch (Exception ex){
+            ex.printStackTrace();
+            logger.warn("Fail to add to statistics {}",ex.getMessage());
+        }
     }
 
 }

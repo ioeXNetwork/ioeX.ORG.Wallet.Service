@@ -19,7 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.web3j.abi.datatypes.generated.Bytes32;
-import org.web3j.crypto.Credentials;
+import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
@@ -49,7 +49,7 @@ public class TestEthService {
     private EthService ethService;
     private String password = "123456";
 //    private String fullfileName = "/Users/clark/Desktop/UTC--2018-09-07T09-29-27.621000000Z--fdbf471435042903392a4fccc8c4ddac882d2294.json";
-    private String fullfileName = "/Users/clark/Desktop/UTC--2018-09-10T06-14-45.698000000Z--b54627981f77fbf8a61282a66429c2fd3c303208.json";
+    private String fullfileName = "/Users/clark/Desktop/UTC--2018-11-23T12-59-55.564000000Z--f4c79a07fc0533edd0410a0d8a410a628474535e.json";
     private Credentials credentials;
     private Web3j web3j;
     private BigInteger gasPrice = new BigInteger("22000000000");
@@ -70,7 +70,6 @@ public class TestEthService {
     }
 
     @Test
-    @Ignore
     public void testGenAddr(){
         try{
             String fileName = ethService.createWallet("123456","/Users/clark/Desktop");
@@ -335,4 +334,17 @@ public class TestEthService {
         System.out.println(tr.getTransactionHash());
     }
 
+    @Test
+    public void testSign(){
+
+        byte[] msg = "helloworld".getBytes();
+        ECKeyPair pair = credentials.getEcKeyPair();
+        System.out.println(pair.getPublicKey());
+        Sign.SignatureData data = Sign.signMessage(msg,pair);
+
+        ECDSASignature signature = new ECDSASignature(new BigInteger(data.getR()),new BigInteger(data.getS()));
+        BigInteger pubNum = Sign.recoverFromSignature(((int)(data.getV()))-27,signature,Hash.sha3(msg));
+        String pubStr = DatatypeConverter.printHexBinary(pubNum.toByteArray());
+        System.out.println(pubStr);
+    }
 }
