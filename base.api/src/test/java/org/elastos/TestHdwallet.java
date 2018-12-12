@@ -7,7 +7,6 @@
 package org.elastos;
 
 import com.alibaba.fastjson.JSON;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import net.sf.json.JSONObject;
 import org.elastos.api.SingleSignTransaction;
 import org.elastos.elaweb.ElaController;
@@ -39,7 +38,7 @@ public class TestHdwallet {
                 "                \"UTXOInputs\": [\n" +
                 "                    {\n" +
                 "                        \"address\": \"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\",\n" +
-                "                        \"txid\": \"5422834137038d64a5f269369008a3a029bd38f27ce1721a2b69739fb50900f2\",\n" +
+                "                        \"txid\": \"9e9cd9fdf8255fb4e6fa3e7825712349fb6644baae23cf9ef9dd55730d6aecba\",\n" +
                 "                        \"index\": 1\n" +
                 "                    }\n" +
                 "                ],\n" +
@@ -50,7 +49,7 @@ public class TestHdwallet {
                 "                        \"address\": \"ELag7vYvKcUBVKJkWosBQw73HSx8madjcP\"\n" +
                 "                    },\n" +
                 "                    {\n" +
-                "                        \"amount\": 34221994,\n" +
+                "                        \"amount\": 34220693,\n" +
                 "                        \"address\": \"EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA\"\n" +
                 "                    }\n" +
                 "                ]\n" +
