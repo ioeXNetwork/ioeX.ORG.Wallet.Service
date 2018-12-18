@@ -7,3 +7,4 @@
 **/_build
 **/_static
 **/*.log
+base.api/src/main/resources/application.properties
