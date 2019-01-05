@@ -382,6 +382,7 @@ using height to get block contained transactions
       }
 
 .. _CreateTx:
+
 create offline transaction
 -----------------------------------------
 create a offline transaction utxo json data , you should sign it using private key
@@ -440,6 +441,7 @@ create a offline transaction utxo json data , you should sign it using private k
 
 
 .. _CreateCrossTx:
+
 create offline cross chain transaction
 -----------------------------------------
 create a cross chain offline transaction utxo json data , you should sign it using private key
@@ -514,6 +516,7 @@ create a cross chain offline transaction utxo json data , you should sign it usi
 
 
 .. _SendRawTx:
+
 send offline transaction
 -----------------------------------------
 send raw transaction
@@ -1062,14 +1065,19 @@ offline transaction
 three steps.
 
 1.create an offline transaction
+
 The API CreateTx_
+
 the result of response is the parameter for step2.
 
 2.sign the offline transaction
+
 The API `generateRawTransaction <https://elastoswalletlibc.readthedocs.io/en/latest/api_guide.html#generaterawtransaction>`_
+
 this api will return the signed raw transaction. the return value(if not empty) is the parameter for step 3
 
 3.send offline raw transaction
+
 The API SendRawTx_
 
 
@@ -1077,12 +1085,17 @@ offline cross chain transaction
 ---------------------------------
 
 1.create an offline cross chain transaction
+
 The API CreateCrossTx_
+
 the result of response is the parameter for step2.
 
 2.sign the offline transaction
+
 The API `generateRawTransaction <https://elastoswalletlibc.readthedocs.io/en/latest/api_guide.html#generaterawtransaction>`_
+
 this api will return the signed raw transaction. the return value(if not empty) is the parameter for step 3
 
 3.send offline raw transaction
+
 The API SendRawTx_
