@@ -104,7 +104,7 @@ check out a transaction
    :statuscode 500:   internal error
    :statuscode 10001: process error
 
-get transactions 
+get transactions
 -----------------------------------------
 get a list of transactions
 
@@ -283,7 +283,7 @@ check out a transaction
 
 Check the current network block height
 -----------------------------------------
-tells you the current block height of the network 
+tells you the current block height of the network
 
 .. http:get:: /api/1/currHeight
 
@@ -312,7 +312,7 @@ tells you the current block height of the network
    :statuscode 404:   not found request
    :statuscode 500:   internal error
    :statuscode 10001: process error
-   
+
 
 get the balance of address
 -----------------------------------------
@@ -344,12 +344,12 @@ get the balance of the provided public address
    :statuscode 400:   bad request
    :statuscode 404:   not found request
    :statuscode 500:   internal error
-   :statuscode 10001: process error  
+   :statuscode 10001: process error
 
 
-Get the transactions of specific height   
+Get the transactions of specific height
 -----------------------------------------
-using height to get block contained transactions 
+using height to get block contained transactions
 
 .. http:get:: /api/1/txs/(int:`block_height`)
 
@@ -381,9 +381,10 @@ using height to get block contained transactions
         "status": 200
       }
 
+.. _CreateTx:
 create offline transaction
 -----------------------------------------
-create a offline transaction utxo json data , you should sign it using private key 
+create a offline transaction utxo json data , you should sign it using private key
 
 .. http:post:: /api/1/createTx
 
@@ -438,6 +439,7 @@ create a offline transaction utxo json data , you should sign it using private k
     }
 
 
+.. _CreateCrossTx:
 create offline cross chain transaction
 -----------------------------------------
 create a cross chain offline transaction utxo json data , you should sign it using private key
@@ -511,9 +513,10 @@ create a cross chain offline transaction utxo json data , you should sign it usi
       }
 
 
+.. _SendRawTx:
 send offline transaction
 -----------------------------------------
-send raw transaction 
+send raw transaction
 
 .. http:post:: /api/1/sendRawTx
 
@@ -527,7 +530,7 @@ send raw transaction
       {
          "data":"0200010013313637333832373132343538363832353937350191FDEFBFF88A53ACCE3A8AB84641A60FF7FA2584AD8472621E3A3A2F8BCB9BFA01000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A3E80300000000000000000000214B177C93439E1E31B1CDA7C3B290F977C74CD0BFB037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A368D8F5050000000000000000217779F85469B90D2F648D6BA771FB641D1782715E000000000141407009A5DAB9A8730ED424EF50217180D25AB81F0BB6E8257A672F9618F3CF13FD32D114DE171460C23532319A85614C460E83699C833E576B5C4782232299A2DF232103293CD3A3359B65FEA091CB6260675BD03A3C5E29CFFB504136A508E9BBBD5A8BAC"
       }
-    
+
    **Example response**:
 
    .. sourcecode:: http
@@ -1047,3 +1050,39 @@ using this api you can transfer money from mainchain to did sidechain.
           "result": "B125D3DE38E6F3D17F9DC565996FDB00282BDD46A20F3B25C8EEDA99FC56EABB",
           "status": 200
       }
+
+.. samples:
+
+Offline transaction samples
+=================================
+how to send an offline transaction or cross chain transaction
+
+offline transaction
+---------------------------------
+three steps.
+
+1.create an offline transaction
+The API CreateTx_
+the result of response is the parameter for step2.
+
+2.sign the offline transaction
+The API `generateRawTransaction <https://elastoswalletlibc.readthedocs.io/en/latest/api_guide.html#generaterawtransaction>`_
+this api will return the signed raw transaction. the return value(if not empty) is the parameter for step 3
+
+3.send offline raw transaction
+The API SendRawTx_
+
+
+offline cross chain transaction
+---------------------------------
+
+1.create an offline cross chain transaction
+The API CreateCrossTx_
+the result of response is the parameter for step2.
+
+2.sign the offline transaction
+The API `generateRawTransaction <https://elastoswalletlibc.readthedocs.io/en/latest/api_guide.html#generaterawtransaction>`_
+this api will return the signed raw transaction. the return value(if not empty) is the parameter for step 3
+
+3.send offline raw transaction
+The API SendRawTx_
