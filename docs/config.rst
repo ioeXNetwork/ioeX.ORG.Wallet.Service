@@ -19,6 +19,8 @@ The code is written in java . make sure you add jdk in your environment.
 
 * `node.prefix` change it to your own local mainchain node .
 
+* `did.mainChainAddress` change it to your own sidechain address in the mainchain if you want to do crosschain transfer.
+
 3. install project 
 
 * mvn install -Dmaven.test.skip -Dgpg.skip

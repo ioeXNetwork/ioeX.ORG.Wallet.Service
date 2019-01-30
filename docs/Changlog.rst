@@ -10,3 +10,4 @@ Changelog
 * :feature:`3` add Did setting info api .
 * :feature:`3` add Did getting info from transaction .
 * :feature:`5` add asset transfer support.
+* :feature:`6` add offline transaction sample.
