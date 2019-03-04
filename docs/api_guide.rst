@@ -681,7 +681,6 @@ check history of Address
             "status":200
         }
 
-
 .. local-service:
 
 Local Service API
@@ -1010,6 +1009,51 @@ using private key to send transaction
 
       {
           "result": "7bcb5fbf7d6e8f673d50999709d695030dbd6d60a00281221540498cf2830f59",
+          "status": 200
+      }
+
+Dpos Voting using private key
+-----------------------------------------
+using private key to vote your producers
+
+.. note::
+    the receiver address must be one of the senders address.
+
+.. http:post:: /api/1/dpos/vote
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/dpos/vote HTTP/1.1
+    Host: localhost
+
+      {
+          "sender":[
+              {
+                  "address":"ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy",
+                  "privateKey":"7EF82C937B296AE3FCE84D79D70B8FA0B0E94A0835A68C26C17036A7B3358834"
+              }
+          ],
+          "memo":"测试",
+          "receiver":[
+              {
+                  "address":"ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy",
+                  "amount":"0.032407",
+                  "candidatePublicKeys":["033c495238ca2b6bb8b7f5ae172363caea9a55cf245ffb3272d078126b1fe3e7cd"]
+              }
+          ]
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": "abd0943a279723f0feefd14535161a1d955c139c5791ae4e1a677532b7d3b212",
           "status": 200
       }
 
