@@ -525,7 +525,7 @@ public class ElaService {
         String memo = param.getMemo();
         ChainType type = param.getType();
         String response = gen(totalAmt, sdrPrivs , sdrAddrs,
-                addrList, valList, memo,type);
+                addrList, valList, memo,type,null);
         Object orst =((Map<String, Object>) JSON.parse(response)).get("Result");
         if ((orst instanceof Map) == false){
             throw new ApiRequestDataException("Not valid request Data");
@@ -538,6 +538,63 @@ public class ElaService {
         return sendTx(rawTx,type);
     }
 
+    public boolean voteValidate(List<String> sdr , List<String> rcv){
+
+        for(int i=0;i<rcv.size();i++){
+            if(sdr == null || !sdr.contains(rcv.get(i))){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public String dposVote(TransferParamEntity param) throws Exception {
+
+        List<LinkedHashMap> rcv = (List<LinkedHashMap>) param.getReceiver();
+        List<Map> sdr = (List<Map>) param.getSender();
+        List<String> addrList = new ArrayList<>();
+        List<Double> valList = new ArrayList<>();
+        Double totalAmt = 0.0;
+        List<String> candidatePublicKeys = new ArrayList<>();
+        for(int i=0;i<rcv.size();i++){
+            Map m = rcv.get(i);
+            addrList.add((String)m.get("address"));
+            Double tmpAmt = Double.valueOf((String)m.get("amount"));
+            valList.add(tmpAmt);
+            totalAmt += tmpAmt;
+            candidatePublicKeys = (ArrayList<String>)m.get("candidatePublicKeys");
+        }
+        List<String> sdrAddrs = new ArrayList<>();
+        List<String> sdrPrivs = new ArrayList<>();
+        for(int i=0;i<sdr.size();i++){
+            Map m = sdr.get(i);
+            String address = (String) m.get("address");
+            String privKey = (String) m.get("privateKey");
+            sdrAddrs.add(address);
+            sdrPrivs.add(privKey);
+        }
+        if(!voteValidate(sdrAddrs,addrList)){
+            throw new RuntimeException("output address must at least be one of input address");
+        }
+        String memo = param.getMemo();
+        ChainType type = param.getType();
+        String response = gen(totalAmt, sdrPrivs , sdrAddrs,
+                addrList, valList, memo,type,candidatePublicKeys);
+        Object orst =((Map<String, Object>) JSON.parse(response)).get("Result");
+        if ((orst instanceof Map) == false){
+            throw new ApiRequestDataException("Not valid request Data");
+        }
+        Map<String,Object> rawM = (Map<String, Object>)orst;
+        String rawTx = (String) rawM.get("rawTx");
+        String txHash = (String) rawM.get("txHash");
+        logger.info("rawTx:" + rawTx + ", txHash :" + txHash);
+
+        return sendTx(rawTx,type);
+    }
+
+
     /**
      * send a transaction to blockchain.
      * @param smAmt
@@ -548,7 +605,7 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings("rawtypes")
-    public String gen(double smAmt , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,ChainType type) throws Exception {
+    public String gen(double smAmt , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,ChainType type,List<String> candidatePublicKeys) throws Exception {
 
         List<String> utxoStrLst = getUtxoByAddr(sdrAddrs,type);
         List<List<Map>> utxoTotal = new ArrayList<>();
@@ -566,7 +623,7 @@ public class ElaService {
             return genCrossTx(smAmt,utxoTotal,prvKeys, sdrAddrs, addrs, amts, data,type);
         }
 
-        return genTx(smAmt, utxoTotal, prvKeys, sdrAddrs, addrs, amts, data);
+        return genTx(smAmt, utxoTotal, prvKeys, sdrAddrs, addrs, amts, data,candidatePublicKeys);
     }
 
     /**
@@ -792,7 +849,7 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
-    public String genTx(double smAmt , List<List<Map>> utxoTotal , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data) throws Exception {
+    public String genTx(double smAmt , List<List<Map>> utxoTotal , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,List<String> candidatePublicKeys) throws Exception {
 
         if(addrs == null || addrs.size() == 0) {
             throw new RuntimeException("output can not be blank");
@@ -855,7 +912,16 @@ public class ElaService {
             Map<String,Object> utxoOutputsDetail = new HashMap<>();
             utxoOutputsDetail.put("address", addrs.get(i));
             utxoOutputsDetail.put("amount", Math.round(amts.get(i) * basicConfiguration.ONE_ELA()));
+            if(candidatePublicKeys != null && candidatePublicKeys.size() > 0){
+                Map<String,Object> payload = new HashMap<>();
+                payload.put("type","vote");
+                payload.put("candidatePublicKeys",candidatePublicKeys);
+                utxoOutputsDetail.put("payload",payload);
+            }
             utxoOutputsArray.add(utxoOutputsDetail);
+        }
+        if(!voteValidate(sdrAddrs.subList(0,utxoIndex+1),addrs)){
+            throw new RuntimeException("actual spend input address can not find output address , try spend more coin ");
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
         String changeAddr = sdrAddrs.get(0);

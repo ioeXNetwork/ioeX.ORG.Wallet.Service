@@ -136,6 +136,13 @@ public class ElaChainController extends BaseController{
         return call(reqBody,TransferParamEntity.class,"transfer",service);
     }
 
+    @RequestMapping(value = "/dpos/vote",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String dposVote(@RequestAttribute String reqBody){
+
+        return call(reqBody,TransferParamEntity.class,"dposVote",service);
+    }
+
     @RequestMapping(value = "/cross/m2d/transfer",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     public String m2dTransfer(@RequestAttribute String reqBody){
