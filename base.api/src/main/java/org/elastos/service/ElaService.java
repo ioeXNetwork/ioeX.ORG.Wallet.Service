@@ -557,14 +557,14 @@ public class ElaService {
         List<String> addrList = new ArrayList<>();
         List<Double> valList = new ArrayList<>();
         Double totalAmt = 0.0;
-        List<String> candidatePublicKeys = new ArrayList<>();
+        List<List<String>> candidatePublicKeys = new ArrayList<>();
         for(int i=0;i<rcv.size();i++){
             Map m = rcv.get(i);
             addrList.add((String)m.get("address"));
             Double tmpAmt = Double.valueOf((String)m.get("amount"));
             valList.add(tmpAmt);
             totalAmt += tmpAmt;
-            candidatePublicKeys = (ArrayList<String>)m.get("candidatePublicKeys");
+            candidatePublicKeys.add((ArrayList<String>)m.get("candidatePublicKeys"));
         }
         List<String> sdrAddrs = new ArrayList<>();
         List<String> sdrPrivs = new ArrayList<>();
@@ -605,7 +605,7 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings("rawtypes")
-    public String gen(double smAmt , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,ChainType type,List<String> candidatePublicKeys) throws Exception {
+    public String gen(double smAmt , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,ChainType type,List<List<String>> candidatePublicKeys) throws Exception {
 
         List<String> utxoStrLst = getUtxoByAddr(sdrAddrs,type);
         List<List<Map>> utxoTotal = new ArrayList<>();
@@ -849,7 +849,7 @@ public class ElaService {
      * @throws Exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
-    public String genTx(double smAmt , List<List<Map>> utxoTotal , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,List<String> candidatePublicKeys) throws Exception {
+    public String genTx(double smAmt , List<List<Map>> utxoTotal , List<String> prvKeys , List<String> sdrAddrs ,List<String> addrs , List<Double> amts , String data,List<List<String>> candidatePublicKeys) throws Exception {
 
         if(addrs == null || addrs.size() == 0) {
             throw new RuntimeException("output can not be blank");
@@ -915,7 +915,7 @@ public class ElaService {
             if(candidatePublicKeys != null && candidatePublicKeys.size() > 0){
                 Map<String,Object> payload = new HashMap<>();
                 payload.put("type","vote");
-                payload.put("candidatePublicKeys",candidatePublicKeys);
+                payload.put("candidatePublicKeys",candidatePublicKeys.get(i));
                 utxoOutputsDetail.put("payload",payload);
             }
             utxoOutputsArray.add(utxoOutputsDetail);
