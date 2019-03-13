@@ -13,17 +13,13 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.elastos.api.Basic;
 import org.elastos.api.SingleSignTransaction;
 import org.elastos.conf.BasicConfiguration;
 import org.elastos.conf.DidConfiguration;
 import org.elastos.conf.NodeConfiguration;
 import org.elastos.conf.RetCodeConfiguration;
-import org.elastos.dao.SendRawTxStatisticRepository;
 import org.elastos.ela.*;
-import org.elastos.elaweb.ElaController;
 import org.elastos.entity.*;
-import org.elastos.exception.ApiInternalException;
 import org.elastos.exception.ApiRequestDataException;
 import org.elastos.util.*;
 import org.elastos.util.ela.ElaHdSupport;
@@ -34,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -118,9 +113,6 @@ public class ElaService {
             status = retCodeConfiguration.SUCC();
         }else{
             status = retCodeConfiguration.PROCESS_ERROR();
-        }
-        if(rawTxEntity.getUserAgent() != null && msg.getError() == 0 ){
-            addStatistics(rawTxEntity.getData(),rawTxEntity.getUserAgent());
         }
         return JSON.toJSONString(new ReturnMsgEntity().setResult(msg.getResult()).setStatus(status));
     }
@@ -920,7 +912,7 @@ public class ElaService {
             }
             utxoOutputsArray.add(utxoOutputsDetail);
         }
-        if(!voteValidate(sdrAddrs.subList(0,utxoIndex+1),addrs)){
+        if(candidatePublicKeys != null && !voteValidate(sdrAddrs.subList(0,utxoIndex+1),addrs)){
             throw new RuntimeException("actual spend input address can not find output address , try spend more coin ");
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
@@ -955,28 +947,6 @@ public class ElaService {
     public String main2DidCrossTransfer(TransferParamEntity entity) throws Exception{
         entity.setType(ChainType.MAIN_DID_CROSS_CHAIN);
         return transfer(entity);
-    }
-
-    @Autowired
-    private SendRawTxStatisticRepository sendRawTxStatisticRepository;
-
-    public void addStatistics(String rawData,String userAgent){
-        try{
-            Map rawMap = Tx.DeSerialize(new DataInputStream(new ByteArrayInputStream(DatatypeConverter.parseHexBinary(rawData))));
-            Map input = ((List<Map>)rawMap.get("UTXOInputs")).get(0);
-            String txid =input.get("Txid")+"";
-            Short vout = (Short)input.get("Vout");
-            String ret = HttpKit.get(nodeConfiguration.getTransaction(null)+txid);
-            String address = ((List<Map>)((Map)((Map)JSON.parse(ret)).get("Result")).get("vout")).get(vout).get("address")+"";
-            String raw = JSON.toJSONString(rawMap);
-            SendRawTxStatistic statistic = new SendRawTxStatistic();
-            statistic.setAddress(address);statistic.setRaw(raw);statistic.setUserAgent(userAgent);
-            sendRawTxStatisticRepository.save(statistic);
-            logger.debug("saving statistics");
-        }catch (Exception ex){
-            ex.printStackTrace();
-            logger.warn("Fail to add to statistics {}",ex.getMessage());
-        }
     }
 
 }
