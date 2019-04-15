@@ -439,6 +439,73 @@ create a offline transaction utxo json data , you should sign it using private k
         "status": 200
     }
 
+.. _CreateVoteTx:
+
+create offline vote transaction
+-----------------------------------------
+create a offline transaction utxo json data , you should sign it using private key
+
+.. http:post:: /api/1/createVoteTx
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+    POST /api/1/createVoteTx HTTP/1.1
+    Host: localhost
+
+      {
+          "inputs":[
+              "ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy"
+          ],
+          "outputs":[
+              {
+                  "addr":"EQNJEA8XhraX8a6SBq98ENU5QSW6nvgSHJ",
+                  "amt":1300
+              }
+          ]
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+          "result": {
+              "Transactions": [
+                  {
+                      "UTXOInputs": [
+                          {
+                              "address": "ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy",
+                              "txid": "498b1fd7c9e455163b79a46b68ac272a7ec4736995c82deab975848221031981",
+                              "index": 0
+                          },
+                          {
+                              "address": "ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy",
+                              "txid": "498b1fd7c9e455163b79a46b68ac272a7ec4736995c82deab975848221031981",
+                              "index": 1
+                          }
+                      ],
+                      "Fee": 4860,
+                      "Outputs": [
+                          {
+                              "amount": 1300,
+                              "address": "EQNJEA8XhraX8a6SBq98ENU5QSW6nvgSHJ"
+                          },
+                          {
+                              "amount": 688546,
+                              "address": "ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy"
+                          }
+                      ]
+                  }
+              ]
+          },
+          "status": 200
+      }
+
 
 .. _CreateCrossTx:
 

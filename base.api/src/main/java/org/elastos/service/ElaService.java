@@ -142,6 +142,43 @@ public class ElaService {
 
     }
 
+    private static final Long ELA_TO_SELA = 100000000l;
+    /**
+     * genHdTx info
+     * @param hdTxEntity info entity
+     * @return
+     * @throws Exception
+     */
+    public String genVoteHdTx(HdTxEntity hdTxEntity) throws Exception {
+
+        String[] inputs = hdTxEntity.getInputs();
+        long total = 0;
+        for(int i=0;i< inputs.length;i++){
+            String input = inputs[i];
+            Map<String,Object> balance = (Map)JSON.parse(getBalance(input));
+            total += Double.valueOf(balance.get("result") +"") * ELA_TO_SELA;
+        }
+        long spend = 0;
+        HdTxEntity.Output[] outputs = hdTxEntity.getOutputs();
+        for(int i=0;i< outputs.length;i++){
+            spend += outputs[i].getAmt();
+        }
+        long left = total - spend - new BigDecimal(basicConfiguration.FEE() * ELA_TO_SELA).longValue();
+        HdTxEntity.Output leftoutput = new HdTxEntity.Output();
+        leftoutput.setAddr(inputs[0]);
+        leftoutput.setAmt(left);
+        HdTxEntity.Output[] desc = new HdTxEntity.Output[outputs.length+1];
+        System.arraycopy(outputs,0,desc,0,outputs.length);
+        desc[desc.length -1] = leftoutput;
+        hdTxEntity.setOutputs(desc);
+        List<List<Map>> utxoList = remakeHdEntity(hdTxEntity);
+
+        return JSON.toJSONString(new ReturnMsgEntity().setResult(genHdTx(hdTxEntity, utxoList)).setStatus(retCodeConfiguration.SUCC()));
+
+    }
+
+
+
     private List<List<Map>> remakeHdEntity(HdTxEntity hdTxEntity){
 
         String[] inputAddrs = hdTxEntity.getInputs();
@@ -441,10 +478,12 @@ public class ElaService {
             utxoOutputsArray.add(utxoOutputsDetail);
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
-        Map<String, Object> utxoOutputsDetail = new HashMap<>();
-        utxoOutputsDetail.put("address", hdTxEntity.getInputs()[0]);
-        utxoOutputsDetail.put("amount", Math.round(leftMoney * basicConfiguration.ONE_ELA()));
-        utxoOutputsArray.add(utxoOutputsDetail);
+        if (leftMoney > 0){
+            Map<String, Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail.put("address", hdTxEntity.getInputs()[0]);
+            utxoOutputsDetail.put("amount", Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+            utxoOutputsArray.add(utxoOutputsDetail);
+        }
 
         txListMap.put("Fee",basicConfiguration.FEE() * basicConfiguration.ONE_ELA());
         return paraListMap;
@@ -916,11 +955,13 @@ public class ElaService {
             throw new RuntimeException("actual spend input address can not find output address , try spend more coin ");
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
-        String changeAddr = sdrAddrs.get(0);
-        Map<String,Object> utxoOutputsDetail = new HashMap<>();
-        utxoOutputsDetail.put("address", changeAddr);
-        utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
-        utxoOutputsArray.add(utxoOutputsDetail);
+        if (leftMoney > 0){
+            String changeAddr = sdrAddrs.get(0);
+            Map<String,Object> utxoOutputsDetail = new HashMap<>();
+            utxoOutputsDetail.put("address", changeAddr);
+            utxoOutputsDetail.put("amount",Math.round(leftMoney * basicConfiguration.ONE_ELA()));
+            utxoOutputsArray.add(utxoOutputsDetail);
+        }
         JSONObject par = new JSONObject();
         par.accumulateAll(paraListMap);
         logger.info("sending : " + par);

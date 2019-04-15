@@ -6,7 +6,6 @@
  */
 package org.elastos.controller;
 
-import com.alibaba.fastjson.JSON;
 import org.elastos.entity.HdTxEntity;
 import org.elastos.entity.RawTxEntity;
 import org.elastos.service.ElaService;
@@ -14,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -82,6 +79,56 @@ public class ElaOfflineController extends BaseController{
     @ResponseBody
     public String genTxData(@RequestAttribute String reqBody ){
         return call(reqBody,HdTxEntity.class,"genHdTx",elaService);
+    }
+
+    /**
+     * request  : {
+     *     "inputs"  : ["xxx","yyy"],
+     *     "outputs" : [{
+     *         "addr":"zzz",
+     *         "amt" :200
+     *     },{
+     *         "addr":"www",
+     *         "amt":240
+     *     }]
+     * }
+     *
+     * response : {"result":{
+     *              "Transactions":[
+     *                 {
+     *                     "UTXOInputs":[
+     *                         {
+     *                             "txid":"61c22a83bb96d958f473148fa64f3b2be02653c66ede506e83b82e522200d446",
+     *                             "index":0,
+     *                             "address":"xxx"
+     *                         },
+     *                         {
+     *                             "txid":"a91b63ba6ffdb13379451895c51abd25c54678bc89268db6e6c3dcbb7bb07062",
+     *                             "index":0,
+     *                             "address":"yyy"
+     *                         }
+     *                     ],
+     *                     "Outputs":[
+     *                         {
+     *                             "address":"zzz",
+     *                             "amount":200
+     *                         },
+     *                         {
+     *                             "address":"wwww",
+     *                             "amount":240
+     *                         }
+     *                     ]
+     *                     "Fee":100
+     *                 }
+     *             ]
+     *         },"status":200}
+     * @param reqBody
+     * @return
+     */
+    @RequestMapping(value = "/createVoteTx",method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public String genVoteTxData(@RequestAttribute String reqBody){
+        return call(reqBody, HdTxEntity.class,"genVoteHdTx",elaService);
     }
 
     /**
