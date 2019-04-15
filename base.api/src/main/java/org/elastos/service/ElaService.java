@@ -478,7 +478,8 @@ public class ElaService {
             utxoOutputsArray.add(utxoOutputsDetail);
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
-        if (leftMoney > 0){
+        System.out.println(leftMoney * basicConfiguration.ONE_ELA());
+        if (Math.round(leftMoney * basicConfiguration.ONE_ELA()) > 0){
             Map<String, Object> utxoOutputsDetail = new HashMap<>();
             utxoOutputsDetail.put("address", hdTxEntity.getInputs()[0]);
             utxoOutputsDetail.put("amount", Math.round(leftMoney * basicConfiguration.ONE_ELA()));
@@ -955,7 +956,7 @@ public class ElaService {
             throw new RuntimeException("actual spend input address can not find output address , try spend more coin ");
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
-        if (leftMoney > 0){
+        if (Math.round(leftMoney * basicConfiguration.ONE_ELA()) > 0){
             String changeAddr = sdrAddrs.get(0);
             Map<String,Object> utxoOutputsDetail = new HashMap<>();
             utxoOutputsDetail.put("address", changeAddr);
