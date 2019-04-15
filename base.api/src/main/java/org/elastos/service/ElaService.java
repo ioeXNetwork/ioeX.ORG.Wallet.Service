@@ -478,7 +478,6 @@ public class ElaService {
             utxoOutputsArray.add(utxoOutputsDetail);
         }
         double leftMoney = (spendMoney - (basicConfiguration.FEE() + smAmt));
-        System.out.println(leftMoney * basicConfiguration.ONE_ELA());
         if (Math.round(leftMoney * basicConfiguration.ONE_ELA()) > 0){
             Map<String, Object> utxoOutputsDetail = new HashMap<>();
             utxoOutputsDetail.put("address", hdTxEntity.getInputs()[0]);
