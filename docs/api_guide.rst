@@ -261,7 +261,7 @@ check out a transaction
           "result":[
               {
                   "AssetId":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
-                  "AssetName":"ELA",
+                  "AssetName":"IOEX",
                   "Utxo":[
                       {
                           "Txid":"4213d73e3764750cbab09593db213ac1ea222947d91e6e6d2c243d2461bd034c",
@@ -613,296 +613,15 @@ send raw transaction
           "status": 200
       }
 
-get address transaction history
-------------------------------------------------
-check history of Address
-
-.. note::
-    this api provided by `Elastos.ORG.API.Misc <https://github.com/elastos/Elastos.ORG.API.Misc>`_ ,so you need to deploy it if you want to use it.
-
-.. http:get:: /api/1/history/(string:`addr`)
-
-   **Example request**:
-
-   .. sourcecode:: http
-
-      GET /api/1/history/EQoascGFzdQ1rLKfNEavJKTm3hMRhBaXBT HTTP/1.1
-      Host: localhost
-
-   **Example response**:
-
-   .. sourcecode:: http
-
-      HTTP/1.1 200 OK
-      Content-Type: application/json
-
-        {
-            "result":{
-                "History":[
-                    {
-                        "Txid":"71eedccf5a45acc17036294b7a1e70c5756dd4c72032cc76d5089c522509096b",
-                        "Type":"income",
-                        "Value":24,
-                        "CreateTime":1544101570,
-                        "Height":175548,
-                        "Fee":100,
-                        "Inputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ],
-                        "Outputs":[
-                            "EQoascGFzdQ1rLKfNEavJKTm3hMRhBaXBT",
-                            "EQoascGFzdQ1rLKfNEavJKTm3hMRhBaXBT",
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ]
-                    }
-                ],
-                "TotalNum":1
-            },
-            "status":200
-        }
-
-
-.. http:get:: /api/1/history/(string:`addr`)?pageSize=(int:`pageSize`)&pageNum=(int:`pageNum`)
-
-   **Example request**:
-
-   .. sourcecode:: http
-
-      GET /api/1/history/EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA?pageSize=4&pageNum=1 HTTP/1.1
-      Host: localhost
-
-   **Example response**:
-
-   .. sourcecode:: http
-
-      HTTP/1.1 200 OK
-      Content-Type: application/json
-
-        {
-            "result":{
-                "History":[
-                    {
-                        "Txid":"58e11ffffafad7456835dc3eff8b28ec0d0b2aa39855d79bfb3e5c52b4cc308f",
-                        "Type":"income",
-                        "Value":8990000,
-                        "CreateTime":1538114443,
-                        "Height":38666,
-                        "Fee":10000,
-                        "Inputs":[
-
-                        ],
-                        "Outputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ]
-                    },
-                    {
-                        "Txid":"b04714ff7076e18efeb9963f99af2f10bd870d39a1774e0821b71640d6b14e52",
-                        "Type":"spend",
-                        "Value":100,
-                        "CreateTime":1538115578,
-                        "Height":38667,
-                        "Fee":100,
-                        "Inputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ],
-                        "Outputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ]
-                    },
-                    {
-                        "Txid":"49eb7f1335d89a9c43446613850d1b763a5f84cad0d1d039ab5726125d2eab47",
-                        "Type":"spend",
-                        "Value":100,
-                        "CreateTime":1538203592,
-                        "Height":39046,
-                        "Fee":100,
-                        "Inputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ],
-                        "Outputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ]
-                    },
-                    {
-                        "Txid":"d7d8b34944790cf2e1fa47851612ddb4eb7e3f5bd75a4af2227d3786b6f4c122",
-                        "Type":"spend",
-                        "Value":100,
-                        "CreateTime":1539238227,
-                        "Height":44755,
-                        "Fee":100,
-                        "Inputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ],
-                        "Outputs":[
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA",
-                            "EbxU18T3M9ufnrkRY7NLt6sKyckDW4VAsA"
-                        ]
-                    }
-                ],
-                "TotalNum":55295
-            },
-            "status":200
-        }
-
-get dpos producer vote statistics
-------------------------------------------------
-producer's vote statistics
-
-.. note::
-    this api provided by `Elastos.ORG.API.Misc <https://github.com/elastos/Elastos.ORG.API.Misc>`_ ,so you need to deploy it if you want to use it.
-
-.. http:get:: /api/1/dpos/producer/(string:`producer_public_key`)
-
-   **Example request**:
-
-   .. sourcecode:: http
-
-      GET /api/1/dpos/producer/03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800 HTTP/1.1
-      Host: localhost
-
-   **Example response**:
-
-   .. sourcecode:: http
-
-      HTTP/1.1 200 OK
-      Content-Type: application/json
-
-        {
-            "result":[
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"2638f858000dd118015daa7b1ee23c86e1c0738b5e641265d52f6612c527c672",
-                    "N":0,
-                    "Value":"4999",
-                    "Outputlock":0,
-                    "Address":"EbeD11dua88L9VQtNmJuEez8aVYX294CML",
-                    "Block_time":1551800055,
-                    "Height":233745
-                },
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"82fce02fb0e835102eb37633e513e78c825a534d46146962391866e25bf8005c",
-                    "N":0,
-                    "Value":"9999",
-                    "Outputlock":0,
-                    "Address":"EKmp4dqTSMVW2f2H3x5H2A6vQf7FJV8Frj",
-                    "Block_time":1551838308,
-                    "Height":234056
-                },
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"74f2beb77f15fcc6f36e43533aec254fc17b84edbb7e2b3a625c9ac2867a7435",
-                    "N":0,
-                    "Value":"123",
-                    "Outputlock":0,
-                    "Address":"EWHEoukFBK6AyMjuS9ucxhQ2twS7BKQEv8",
-                    "Block_time":1551838618,
-                    "Height":234058
-                },
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"1a71b89c5e6c1b9baf31884f075f5e3ea159d8edfe5d665a2f5182d0c715ff91",
-                    "N":0,
-                    "Value":"9999",
-                    "Outputlock":0,
-                    "Address":"EYZt2Xk76NNFEHiihqkyBhyzuw1abcheXF",
-                    "Block_time":1551850832,
-                    "Height":234161
-                },
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"71083736e824c73e4b327a8b958dbbd00aec879768a96963cbdfc5008e1bd393",
-                    "N":0,
-                    "Value":"0.01111111",
-                    "Outputlock":0,
-                    "Address":"ELbKQrj8DTYn2gU7KBejcNWb4ix4EAGDmy",
-                    "Block_time":1551851053,
-                    "Height":234163
-                },
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"fbc81da6db6db5cb09c76fe405cf238353a8e837dda5acacd137ba43a9da1d02",
-                    "N":0,
-                    "Value":"9999",
-                    "Outputlock":0,
-                    "Address":"ENaaqePNBtrZsNbs9uc35CPqTbvn8oaYL9",
-                    "Block_time":1551853616,
-                    "Height":234180
-                },
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"82529a764fd1bbdd4ae39e9bb791d029ecb3010b7db48a7b5d1edfe8be71f36e",
-                    "N":0,
-                    "Value":"9999",
-                    "Outputlock":0,
-                    "Address":"Ea3XHVqFiAjYA4sSCTQSmrWQafGkbxaYxe",
-                    "Block_time":1551853616,
-                    "Height":234180
-                }
-            ],
-            "status":200
-        }
-
-get dpos voter's statistics
-------------------------------------------------
-voter's statistics
-
-.. note::
-    this api provided by `Elastos.ORG.API.Misc <https://github.com/elastos/Elastos.ORG.API.Misc>`_ ,so you need to deploy it if you want to use it.
-
-.. http:get:: /api/1/dpos/address/(string:`address`)
-
-   **Example request**:
-
-   .. sourcecode:: http
-
-      GET /api/1/dpos/address/ENaaqePNBtrZsNbs9uc35CPqTbvn8oaYL9 HTTP/1.1
-      Host: localhost
-
-   **Example response**:
-
-   .. sourcecode:: http
-
-      HTTP/1.1 200 OK
-      Content-Type: application/json
-
-        {
-            "result":[
-                {
-                    "Producer_public_key":"03330ee8520088b7f578a9afabaef0c034fa31fe1354cb3a14410894f974132800",
-                    "Vote_type":"Delegate",
-                    "Txid":"fbc81da6db6db5cb09c76fe405cf238353a8e837dda5acacd137ba43a9da1d02",
-                    "N":0,
-                    "Value":"9999",
-                    "Outputlock":0,
-                    "Address":"ENaaqePNBtrZsNbs9uc35CPqTbvn8oaYL9",
-                    "Block_time":1551853616,
-                    "Height":234180
-                }
-            ],
-            "status":200
-        }
-
 .. local-service:
 
 Local Service API
 =================================
 If you are running code locally , you can use the following API .
 
-create a ELA wallet
+create a IOEX wallet
 -----------------------------------------
-generate a elastos wallet
+generate a ioeX wallet
 
 .. http:get:: /api/1/createWallet
 
@@ -1180,7 +899,7 @@ verify message signed by a public address's private key
 
 
 
-transfer ELA using private key
+transfer IOEX using private key
 -----------------------------------------
 using private key to send transaction
 
@@ -1332,30 +1051,9 @@ the result of response is the parameter for step2.
 
 2.sign the offline transaction
 
-The API `generateRawTransaction <https://elastoswalletlibc.readthedocs.io/en/latest/api_guide.html#generaterawtransaction>`_
-
 this api will return the signed raw transaction. the return value(if not empty) is the parameter for step 3
 
 3.send offline raw transaction
 
 The API SendRawTx_
 
-
-offline cross chain transaction
----------------------------------
-
-1.create an offline cross chain transaction
-
-The API CreateCrossTx_
-
-the result of response is the parameter for step2.
-
-2.sign the offline transaction
-
-The API `generateRawTransaction <https://elastoswalletlibc.readthedocs.io/en/latest/api_guide.html#generaterawtransaction>`_
-
-this api will return the signed raw transaction. the return value(if not empty) is the parameter for step 3
-
-3.send offline raw transaction
-
-The API SendRawTx_

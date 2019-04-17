@@ -12,14 +12,12 @@ The code is written in java . make sure you add jdk in your environment.
 
 1. download the code 
 
-* git clone https://github.com/elastos/Elastos.ORG.Wallet.Service.git
+* git clone https://github.com/ioeXNetwork/ioeX.ORG.Wallet.Service.git
 
 
 2. modify application.properties 
 
 * `node.prefix` change it to your own local mainchain node .
-
-* `did.mainChainAddress` change it to your own sidechain address in the mainchain if you want to do crosschain transfer.
 
 3. install project 
 

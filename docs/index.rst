@@ -1,11 +1,6 @@
 Node
 ===================================
 
-.. image:: logo.png
-    :width: 120px
-    :alt: elastos logo
-    :align: center
-
 Node provide access to ioeX network. Our easy to use API and developer tools provide secure, reliable, and scalable access to ioeX network. 
 
 
