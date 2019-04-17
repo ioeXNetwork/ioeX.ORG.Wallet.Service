@@ -39,7 +39,8 @@ public class IOEXHdSupport {
     // 2^11
     private static String[] wordlist = new String[2048];
     private static Change acctType = BIP44.m().purpose44().coinType(0).account(0).external();
-    private static final String SALT = "mnemonic";
+    //private static final String SALT = "mnemonic";
+    private static final String SALT = "";
 
     private static String createEntropy() {
         UUID uuid = UUID.randomUUID();
