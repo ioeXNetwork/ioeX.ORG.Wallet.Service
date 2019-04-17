@@ -1,4 +1,4 @@
-Getting started with the nodela API
+Getting started with the node API
 ########################################
 
 .. toctree::
@@ -6,7 +6,7 @@ Getting started with the nodela API
 
 Introduction
 =============
-Nodela has a Restful API with URL endpoints corresponding to actions that users can perform with their channels. The endpoints accept and return JSON encoded objects. The API URL path always contains the API version in order to differentiate queries to different API versions. All queries start with: ``/api/<version>/`` where ``<version>`` is an integer representing the current API version.
+Node has a Restful API with URL endpoints corresponding to actions that users can perform with their channels. The endpoints accept and return JSON encoded objects. The API URL path always contains the API version in order to differentiate queries to different API versions. All queries start with: ``/api/<version>/`` where ``<version>`` is an integer representing the current API version.
 
 .. mainchain-api:
 

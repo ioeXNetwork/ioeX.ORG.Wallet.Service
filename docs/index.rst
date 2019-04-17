@@ -1,4 +1,4 @@
-Nodela
+Node
 ===================================
 
 .. image:: logo.png
@@ -6,11 +6,11 @@ Nodela
     :alt: elastos logo
     :align: center
 
-Nodela provide access to elastos network. Our easy to use API and developer tools provide secure, reliable, and scalable access to elastos network. 
+Node provide access to ioeX network. Our easy to use API and developer tools provide secure, reliable, and scalable access to ioeX network. 
 
 
 .. note::
-    you can also construct your own network using `Node <https://github.com/elastos/Elastos.ELA>`_
+    you can also construct your own network using `Node <https://github.com/ioeXNetwork/ioeX.Mainchain>`_
 
 .. warning::
     Since software is written by humans, it can have bugs. Thus, if you have questions you are always welcome to issue your problem.
@@ -21,11 +21,11 @@ useful links
 General
 ~~~~~~~
 
-* `Elastos <https://elastos.org>`_
+* `ioeX <https://www.ioex.vip>`_
 
-* `Changelog <https://github.com/elastos/Elastos.ORG.Wallet.Service/blob/master/Changelog.md>`_
+* `Changelog <https://github.com/ioeXNetwork/ioeX.ORG.Wallet.Service/blob/master/Changelog.md>`_
 
-* `Source Code <https://github.com/elastos/Elastos.ORG.Wallet.Service>`_
+* `Source Code <https://github.com/ioeXNetwork/ioeX.ORG.Wallet.Service>`_
 
 
 

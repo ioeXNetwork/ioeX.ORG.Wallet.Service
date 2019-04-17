@@ -18,14 +18,14 @@ register-testnet Used for function and performance test
 wallet
 =======
 
-* Wallet: https://wallet.test.elastos.org
+* Wallet: https://wallet.test.ioex.org
 
 
 .. index:: regtest browser
 Browser
 =======
 
-* Browser: https://blockchain.test.elastos.org
+* Browser: https://blockchain.test.ioex.org
 
 .. index:: regtest nodela 
 nodela
@@ -46,20 +46,20 @@ Used for developers, docking of exchanges, and verification of upgrade stategies
 Wallet
 =======
 
-* Wallet: https://wallet-beta.elastos.org
+* Wallet: https://wallet-beta.ioex.org
 
 
 .. index:: testnet browser
 Browser 
 =======
 
-* Browser: https://blockchain-beta.elastos.org
+* Browser: https://blockchain-beta.ioex.org
 
 .. index:: testnet nodela 
 nodela 
 ====================
 
-* Domain: http://fun-api-test.elastos.org
+* Domain: http://fun-api-test.ioex.org
 
 .. _official-mainnet:
 
@@ -73,14 +73,14 @@ Production Environment
 Wallet 
 =======
 
-* Wallet: https://wallet.elastos.org
+* Wallet: https://wallet.ioex.org
 
 
 .. index:: mainnet browser
 Browser 
 =======
 
-* Browser: https://blockchain.elastos.org
+* Browser: https://blockchain.ioex.org
 
 .. index:: mainnet nodela 
 nodela 
