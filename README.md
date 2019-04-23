@@ -30,7 +30,7 @@ Add A Entry Class
 public class MainEntry {
 
     public static void main(String[] args) {
-        SpringApplication.run(org.elastos.Application.class, args);
+        SpringApplication.run(org.ioexnetwork.Application.class, args);
     }
 }
 ```
@@ -65,7 +65,7 @@ retcode.INTERNAL_ERROR   = 500
 retcode.PROCESS_ERROR    = 10001
 
 ## basic
-basic.ONE_ELA            = 100000000
+basic.ONE_IOEX            = 100000000
 basic.FEE                = 0.000001
 basic.CROSS_CHAIN_FEE    = 0.0001
 
